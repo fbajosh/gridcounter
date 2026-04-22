@@ -1,0 +1,24 @@
+{
+  "name": "Grid Counter",
+  "short_name": "Grid Counter",
+  "description": "Touch-first nested tally counters with expandable subcounters and session stats.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0e1017",
+  "theme_color": "#0e1017",
+  "icons": [
+    {
+      "src": "./pwa-icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "./pwa-icons/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

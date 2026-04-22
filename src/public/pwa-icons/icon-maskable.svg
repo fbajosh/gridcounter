@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="counter-grid-mask" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f86891" />
+      <stop offset="100%" stop-color="#8f6bff" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="176" fill="#0f1119" />
+  <rect x="72" y="72" width="368" height="368" rx="128" fill="url(#counter-grid-mask)" opacity="0.24" />
+  <rect x="134" y="144" width="108" height="108" rx="32" fill="#ffffff" opacity="0.96" />
+  <rect x="272" y="182" width="108" height="108" rx="32" fill="#ffffff" opacity="0.82" />
+  <rect x="272" y="328" width="108" height="72" rx="26" fill="#ffffff" opacity="0.72" />
+  <path d="M258 172v58M229 201h58" stroke="#ffffff" stroke-width="20" stroke-linecap="round" />
+  <path d="M192 286v58M163 315h58" stroke="#ffffff" stroke-width="20" stroke-linecap="round" />
+</svg>

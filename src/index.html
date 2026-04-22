@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta
+      name="description"
+      content="Touch-first nested tally counters with expandable subcounters, persistent state, and mobile-friendly stats."
+    />
+    <meta name="theme-color" content="#0e1017" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Grid Counter" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta property="og:site_name" content="Grid Counter" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Grid Counter" />
+    <meta
+      property="og:description"
+      content="Touch-first nested tally counters with expandable subcounters, persistent state, and mobile-friendly stats."
+    />
+    <title>Grid Counter</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
+    <link rel="apple-touch-icon" href="./pwa-icons/icon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Ubuntu+Sans:ital,wght@0,400..700;1,400..700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./landing.css" />
+  </head>
+  <body>
+    <div class="bokeh-layer" aria-hidden="true">
+      <span class="bokeh-dot bokeh-dot-1"></span>
+      <span class="bokeh-dot bokeh-dot-2"></span>
+      <span class="bokeh-dot bokeh-dot-3"></span>
+      <span class="bokeh-dot bokeh-dot-4"></span>
+      <span class="bokeh-dot bokeh-dot-5"></span>
+      <span class="bokeh-dot bokeh-dot-6"></span>
+      <span class="bokeh-dot bokeh-dot-7"></span>
+      <span class="bokeh-dot bokeh-dot-8"></span>
+    </div>
+    <main class="app-shell">
+      <header class="app-header">
+        <div class="brand-block">
+          <h1 class="app-title">
+            <span class="app-title-line" data-i18n="app.titleLead">Grid</span>
+            <span class="app-title-line" data-i18n="app.titleTail">Counter</span>
+          </h1>
+        </div>
+      </header>
+
+      <section class="toolbar-bar" aria-label="Counter settings" data-i18n-aria-label="accessibility.settings">
+        <div class="toolbar-item">
+          <button
+            class="toolbar-button"
+            type="button"
+            data-menu-toggle="mode-menu"
+            aria-controls="mode-menu"
+            aria-expanded="false"
+            aria-label="Mode"
+            data-i18n-aria-label="controls.mode"
+          >
+            <span class="toolbar-button-glyph toolbar-button-glyph-symbol" aria-hidden="true">±</span>
+          </button>
+          <div class="toolbar-panel hidden" id="mode-menu">
+            <button class="toolbar-option" type="button" data-mode="increment" data-i18n="controls.increment">Increment</button>
+            <button class="toolbar-option" type="button" data-mode="decrement" data-i18n="controls.decrement">Decrement</button>
+          </div>
+        </div>
+
+        <div class="toolbar-item">
+          <button
+            class="toolbar-button"
+            type="button"
+            data-menu-toggle="step-menu"
+            aria-controls="step-menu"
+            aria-expanded="false"
+            aria-label="Count By"
+            data-i18n-aria-label="controls.step"
+          >
+            <svg
+              class="toolbar-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M12.25 15L13.75 15C14.439 15 15 14.439 15 13.75L15 2.25C15 1.561 14.439 1 13.75 1L12.25 1C11.561 1 11 1.561 11 2.25L11 13.75C11 14.439 11.561 15 12.25 15ZM12 2.25C12 2.112 12.112 2 12.25 2L13.75 2C13.888 2 14 2.112 14 2.25L14 13.75C14 13.888 13.888 14 13.75 14L12.25 14C12.112 14 12 13.888 12 13.75L12 2.25Z"
+              />
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M8.75 15L7.25 15C6.561 15 6 14.439 6 13.75L6 6.25C6 5.561 6.561 5 7.25 5L8.75 5C9.439 5 10 5.561 10 6.25L10 13.75C10 14.439 9.439 15 8.75 15ZM7.25 6C7.112 6 7 6.112 7 6.25L7 13.75C7 13.888 7.112 14 7.25 14L8.75 14C8.888 14 9 13.888 9 13.75L9 6.25C9 6.112 8.888 6 8.75 6L7.25 6Z"
+              />
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M3.75 15L2.25 15C1.561 15 1 14.439 1 13.75L1 8.25C1 7.561 1.561 7 2.25 7L3.75 7C4.439 7 5 7.561 5 8.25L5 13.75C5 14.439 4.439 15 3.75 15ZM2.25 8C2.112 8 2 8.112 2 8.25L2 13.75C2 13.888 2.112 14 2.25 14L3.75 14C3.888 14 4 13.888 4 13.75L4 8.25C4 8.112 3.888 8 3.75 8L2.25 8Z"
+              />
+            </svg>
+          </button>
+          <div class="toolbar-panel hidden" id="step-menu">
+            <button class="toolbar-option" type="button" data-step="1">1</button>
+            <button class="toolbar-option" type="button" data-step="5">5</button>
+            <button class="toolbar-option" type="button" data-step="10">10</button>
+          </div>
+        </div>
+
+        <div class="toolbar-item">
+          <button
+            class="toolbar-button"
+            type="button"
+            data-menu-toggle="edit-menu"
+            aria-controls="edit-menu"
+            aria-expanded="false"
+            aria-label="Edit"
+            data-i18n-aria-label="controls.edit"
+          >
+            <svg
+              class="toolbar-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M14.236 1.76386C13.2123 0.740172 11.5525 0.740171 10.5289 1.76386L2.65722 9.63549C2.28304 10.0097 2.01623 10.4775 1.88467 10.99L1.01571 14.3755C0.971767 14.5467 1.02148 14.7284 1.14646 14.8534C1.27144 14.9783 1.45312 15.028 1.62432 14.9841L5.00978 14.1151C5.52234 13.9836 5.99015 13.7168 6.36433 13.3426L14.236 5.47097C15.2596 4.44728 15.2596 2.78755 14.236 1.76386ZM11.236 2.47097C11.8691 1.8378 12.8957 1.8378 13.5288 2.47097C14.162 3.10413 14.162 4.1307 13.5288 4.76386L12.75 5.54269L10.4571 3.24979L11.236 2.47097ZM9.75002 3.9569L12.0429 6.24979L5.65722 12.6355C5.40969 12.883 5.10023 13.0595 4.76117 13.1465L2.19447 13.8053L2.85327 11.2386C2.9403 10.8996 3.1168 10.5901 3.36433 10.3426L9.75002 3.9569Z"
+              />
+            </svg>
+          </button>
+          <div class="toolbar-panel hidden" id="edit-menu">
+            <button class="toolbar-option" id="edit-mode-button" type="button" data-edit-mode>Enter Edit Mode</button>
+            <button class="toolbar-option" type="button" data-dialog-open="save-layout" data-i18n="controls.saveLayout">Save Layout</button>
+            <button class="toolbar-option" type="button" data-dialog-open="load-layout" data-i18n="controls.loadLayout">Load Layout</button>
+            <button class="toolbar-option toolbar-option-danger" id="reset-all-button" type="button" data-i18n="controls.resetAll">Reset All</button>
+          </div>
+        </div>
+
+        <div class="toolbar-item">
+          <button
+            class="toolbar-button"
+            type="button"
+            data-menu-toggle="settings-menu"
+            aria-controls="settings-menu"
+            aria-expanded="false"
+            aria-label="Settings"
+            data-i18n-aria-label="controls.settingsMenu"
+          >
+            <svg
+              class="toolbar-icon toolbar-icon-gear"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M12 9C10.3425 9 9.00002 10.3425 9.00002 12C9.00002 13.6575 10.3425 15 12 15C13.6575 15 15 13.6575 15 12C15 10.3425 13.6575 9 12 9ZM12 13.5C11.172 13.5 10.5 12.828 10.5 12C10.5 11.172 11.172 10.5 12 10.5C12.828 10.5 13.5 11.172 13.5 12C13.5 12.828 12.828 13.5 12 13.5ZM21.8475 14.5725L19.9185 12.942C19.8675 12.8985 19.8195 12.8505 19.776 12.7995C19.332 12.279 19.3965 11.5005 19.9185 11.058L21.8475 9.4275C22.0395 9.2655 22.113 9.0045 22.0365 8.766C21.579 7.3545 20.823 6.06 19.8285 4.962C19.7085 4.83 19.5405 4.758 19.368 4.758C19.2975 4.758 19.227 4.77 19.1595 4.794L16.779 5.6415C16.716 5.664 16.65 5.682 16.584 5.694C16.509 5.7075 16.434 5.715 16.3605 5.715C15.7725 5.715 15.2505 5.298 15.141 4.701L14.6865 2.223C14.6415 1.977 14.451 1.782 14.205 1.7295C13.485 1.5765 12.7485 1.5 12.0015 1.5C11.2545 1.5 10.5165 1.578 9.79652 1.7295C9.55052 1.782 9.36002 1.977 9.31502 2.223L8.86202 4.701C8.85002 4.767 8.83202 4.8315 8.80952 4.8945C8.62802 5.4 8.15102 5.715 7.64102 5.715C7.50302 5.715 7.36202 5.691 7.22402 5.643L4.84352 4.7955C4.77602 4.7715 4.70402 4.7595 4.63502 4.7595C4.46252 4.7595 4.29452 4.8315 4.17452 4.9635C3.17852 6.0615 2.42402 7.356 1.96502 8.7675C1.88702 9.006 1.96202 9.267 2.15402 9.429L4.08302 11.0595C4.13402 11.103 4.18202 11.151 4.22552 11.202C4.66952 11.7225 4.60502 12.501 4.08302 12.9435L2.15402 14.574C1.96202 14.736 1.88852 14.997 1.96502 15.2355C2.42252 16.647 3.17852 17.9415 4.17452 19.0395C4.29452 19.1715 4.46252 19.2435 4.63502 19.2435C4.70552 19.2435 4.77602 19.2315 4.84352 19.2075L7.22402 18.36C7.28702 18.3375 7.35302 18.3195 7.41902 18.3075C7.49402 18.294 7.56902 18.288 7.64252 18.288C8.23052 18.288 8.75252 18.705 8.86202 19.302L9.31502 21.78C9.36002 22.026 9.55052 22.221 9.79652 22.2735C10.5165 22.4265 11.2545 22.503 12.0015 22.503C12.7485 22.503 13.4865 22.425 14.205 22.2735C14.451 22.221 14.6415 22.026 14.6865 21.78L15.141 19.302C15.153 19.236 15.171 19.1715 15.1935 19.1085C15.375 18.603 15.852 18.288 16.362 18.288C16.5 18.288 16.641 18.312 16.779 18.36L19.158 19.2075C19.227 19.2315 19.2975 19.2435 19.3665 19.2435C19.539 19.2435 19.707 19.1715 19.827 19.0395C20.823 17.9415 21.5775 16.647 22.035 15.2355C22.113 14.997 22.038 14.736 21.846 14.574L21.8475 14.5725ZM19.092 17.589L17.2815 16.944C16.9845 16.839 16.6755 16.785 16.362 16.785C15.2085 16.785 14.1705 17.514 13.782 18.5985C13.731 18.738 13.6935 18.882 13.6665 19.029L13.3215 20.9055C12.8865 20.9685 12.444 21 12.0015 21C11.559 21 11.1165 20.9685 10.68 20.904L10.3365 19.0275C10.098 17.727 8.96552 16.7835 7.64252 16.7835C7.48052 16.7835 7.31552 16.7985 7.14902 16.8285C7.00352 16.8555 6.86102 16.893 6.72002 16.9425L4.90952 17.5875C4.35752 16.896 3.91652 16.1385 3.59102 15.321L5.05202 14.0865C5.61152 13.614 5.95202 12.951 6.01202 12.222C6.07202 11.493 5.84252 10.785 5.36702 10.227C5.27102 10.1145 5.16452 10.008 5.05202 9.912L3.59102 8.6775C3.91652 7.86 4.35752 7.101 4.90952 6.411L6.72002 7.056C7.01702 7.161 7.32602 7.215 7.64102 7.215C8.79452 7.215 9.83252 6.486 10.221 5.4015C10.272 5.2605 10.3095 5.1165 10.3365 4.971L10.68 3.0945C11.1165 3.0315 11.559 2.9985 12.0015 2.9985C12.444 2.9985 12.8865 3.03 13.3215 3.093L13.665 4.9695C13.9035 6.27 15.036 7.2135 16.359 7.2135C16.521 7.2135 16.686 7.1985 16.851 7.1685C16.9965 7.1415 17.1405 7.104 17.2815 7.0545L19.092 6.4095C19.644 7.0995 20.085 7.8585 20.4105 8.676L18.951 9.9105C18.3915 10.383 18.0495 11.046 17.991 11.775C17.931 12.504 18.1605 13.2135 18.636 13.77C18.7335 13.884 18.8385 13.989 18.9525 14.085L20.4135 15.3195C20.088 16.137 19.647 16.896 19.095 17.586L19.092 17.589Z"
+              />
+            </svg>
+          </button>
+          <div class="toolbar-panel hidden" id="settings-menu">
+            <button class="toolbar-option" type="button" data-dialog-open="stats" data-i18n="views.stats">Stats</button>
+            <button class="toolbar-option" type="button" data-dialog-open="instructions" data-i18n="dialogs.instructionsMenu">Instructions</button>
+            <button class="toolbar-option" type="button" data-dialog-open="about" data-i18n="dialogs.aboutMenu">About</button>
+            <button class="toolbar-option" type="button" data-dialog-open="theme" data-i18n="controls.theme">Theme</button>
+            <button class="toolbar-option" type="button" data-dialog-open="language" data-i18n="controls.language">Language</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="workspace-panel">
+        <section class="workspace-view">
+          <div class="tree-scroller">
+            <div class="counter-tree" id="counter-tree" aria-label="Counter tree" data-i18n-aria-label="accessibility.counterTree"></div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <div
+      class="dialog-shell hidden"
+      data-dialog="stats"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-labelledby="stats-dialog-title"
+    >
+      <article class="dialog-card dialog-card-stats">
+        <div class="dialog-header">
+          <h2 class="dialog-title" id="stats-dialog-title" data-i18n="views.stats">Stats</h2>
+          <button class="dialog-close close-chip" type="button" data-dialog-close aria-label="Close" data-i18n-aria-label="dialogs.close">x</button>
+        </div>
+        <div class="dialog-body dialog-body-stats">
+          <div class="stats-grid" id="stats-summary"></div>
+
+          <div class="stats-panels">
+            <article class="stats-card">
+              <div class="stats-card-header">
+                <h2 class="stats-card-title" data-i18n="stats.timeline">Tap Timeline</h2>
+              </div>
+              <div class="timeline-wrap" id="timeline-wrap"></div>
+            </article>
+
+            <article class="stats-card">
+              <div class="stats-card-header">
+                <h2 class="stats-card-title" data-i18n="stats.activeCounters">Most Active Counters</h2>
+              </div>
+              <div class="active-counter-list" id="active-counter-list"></div>
+            </article>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div
+      class="dialog-shell hidden"
+      data-dialog="instructions"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-labelledby="instructions-dialog-title"
+    >
+      <article class="dialog-card">
+        <div class="dialog-header">
+          <h2 class="dialog-title" id="instructions-dialog-title" data-i18n="dialogs.instructionsTitle">Instructions</h2>
+          <button class="dialog-close close-chip" type="button" data-dialog-close aria-label="Close" data-i18n-aria-label="dialogs.close">x</button>
+        </div>
+        <div class="dialog-body">
+          <p data-i18n="dialogs.instructionsIntro">Tap any counter tile to change its number.</p>
+          <p data-i18n="dialogs.instructionsExpand">Turn on Edit Mode to reveal the right and bottom + slivers for expanding the grid.</p>
+          <p data-i18n="dialogs.instructionsRename">In Edit Mode, tap the pencil under a counter's path pill to rename it.</p>
+          <p data-i18n="dialogs.instructionsToolbar">Use the top bar to open stats and settings, change mode, adjust count-by, manage edit mode, save or load layouts, and reset all.</p>
+        </div>
+      </article>
+    </div>
+
+    <div
+      class="dialog-shell hidden"
+      data-dialog="about"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-labelledby="about-dialog-title"
+    >
+      <article class="dialog-card">
+        <div class="dialog-header">
+          <h2 class="dialog-title" id="about-dialog-title" data-i18n="dialogs.aboutTitle">About</h2>
+          <button class="dialog-close close-chip" type="button" data-dialog-close aria-label="Close" data-i18n-aria-label="dialogs.close">x</button>
+        </div>
+        <div class="dialog-body">
+          <p data-i18n="dialogs.aboutBody1">
+            Grid Counter is a touch-first nested tally app for tracking grouped counts on a phone-sized screen.
+          </p>
+          <p data-i18n="dialogs.aboutBody2">
+            It runs as a web app for now, stores your session locally, and includes a stats view for activity over time.
+          </p>
+        </div>
+      </article>
+    </div>
+
+    <div
+      class="dialog-shell hidden"
+      data-dialog="theme"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-labelledby="theme-dialog-title"
+    >
+      <article class="dialog-card">
+        <div class="dialog-header">
+          <h2 class="dialog-title" id="theme-dialog-title" data-i18n="controls.theme">Theme</h2>
+          <button class="dialog-close close-chip" type="button" data-dialog-close aria-label="Close" data-i18n-aria-label="dialogs.close">x</button>
+        </div>
+        <div class="dialog-body">
+          <div class="dialog-choice-list">
+            <button class="choice-chip" type="button" data-theme-value="dark" data-i18n="themes.dark">Dark</button>
+            <button class="choice-chip" type="button" data-theme-value="light" data-i18n="themes.light">Light</button>
+            <button class="choice-chip" type="button" data-theme-value="mogged" data-i18n="themes.mogged">Mogged</button>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div
+      class="dialog-shell hidden"
+      data-dialog="language"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-labelledby="language-dialog-title"
+    >
+      <article class="dialog-card">
+        <div class="dialog-header">
+          <h2 class="dialog-title" id="language-dialog-title" data-i18n="controls.language">Language</h2>
+          <button class="dialog-close close-chip" type="button" data-dialog-close aria-label="Close" data-i18n-aria-label="dialogs.close">x</button>
+        </div>
+        <div class="dialog-body">
+          <div class="dialog-choice-list">
+            <button class="choice-chip" type="button" data-locale="en-US">English</button>
+            <button class="choice-chip" type="button" data-locale="es-ES">español</button>
+            <button class="choice-chip" type="button" data-locale="pt-PT">português</button>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div
+      class="dialog-shell hidden"
+      data-dialog="save-layout"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-labelledby="save-layout-dialog-title"
+    >
+      <article class="dialog-card">
+        <div class="dialog-header">
+          <h2 class="dialog-title" id="save-layout-dialog-title" data-i18n="dialogs.saveLayoutTitle">Save Layout</h2>
+          <button class="dialog-close close-chip" type="button" data-dialog-close aria-label="Close" data-i18n-aria-label="dialogs.close">x</button>
+        </div>
+        <form class="dialog-form" id="save-layout-form">
+          <label class="dialog-field" for="save-layout-name">
+            <span class="dialog-label" data-i18n="dialogs.layoutName">Layout Name</span>
+          </label>
+          <input class="dialog-input" id="save-layout-name" name="layout-name" type="text" maxlength="60" required />
+          <p class="dialog-note" data-i18n="dialogs.saveLayoutHint">
+            Saves the structure and titles only. Counts start from zero when loaded.
+          </p>
+          <button class="toolbar-option dialog-submit" type="submit" data-i18n="dialogs.saveAction">Save Layout</button>
+        </form>
+      </article>
+    </div>
+
+    <div
+      class="dialog-shell hidden"
+      data-dialog="load-layout"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-labelledby="load-layout-dialog-title"
+    >
+      <article class="dialog-card">
+        <div class="dialog-header">
+          <h2 class="dialog-title" id="load-layout-dialog-title" data-i18n="dialogs.loadLayoutTitle">Load Layout</h2>
+          <button class="dialog-close close-chip" type="button" data-dialog-close aria-label="Close" data-i18n-aria-label="dialogs.close">x</button>
+        </div>
+        <div class="saved-layout-list" id="saved-layout-list"></div>
+      </article>
+    </div>
+
+    <script type="module" src="./landing.ts"></script>
+  </body>
+</html>
