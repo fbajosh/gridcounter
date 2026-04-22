@@ -2,6 +2,7 @@ import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { relative, resolve } from "node:path";
 import { defineConfig } from "vite";
 
+const APP_SLUG = "gridcounter";
 const ROUTE_ENTRYPOINTS = ["stats"];
 const SERVICE_WORKER_FILENAME = "service-worker.js";
 
@@ -30,8 +31,8 @@ async function listFilesRecursively(directory) {
 }
 
 function buildServiceWorkerSource({ basePath, buildVersion, precacheUrls }) {
-  return `const PRECACHE_CACHE_NAME = ${JSON.stringify(`counterapp-precache-${buildVersion}`)};
-const RUNTIME_CACHE_NAME = ${JSON.stringify(`counterapp-runtime-${buildVersion}`)};
+  return `const PRECACHE_CACHE_NAME = ${JSON.stringify(`${APP_SLUG}-precache-${buildVersion}`)};
+const RUNTIME_CACHE_NAME = ${JSON.stringify(`${APP_SLUG}-runtime-${buildVersion}`)};
 const BASE_PATH = ${JSON.stringify(basePath)};
 const BASE_ROOT = BASE_PATH === "/" ? "" : BASE_PATH.replace(/\\/$/, "");
 const PRECACHE_URLS = ${JSON.stringify(precacheUrls, null, 2)};
@@ -52,7 +53,7 @@ self.addEventListener("activate", (event) => {
             return Promise.resolve(false);
           }
 
-          if (cacheName.startsWith("counterapp-precache-") || cacheName.startsWith("counterapp-runtime-")) {
+          if (cacheName.startsWith(${JSON.stringify(`${APP_SLUG}-precache-`)}) || cacheName.startsWith(${JSON.stringify(`${APP_SLUG}-runtime-`)})) {
             return caches.delete(cacheName);
           }
 
@@ -202,7 +203,7 @@ function emitRouteEntrypoints() {
 export default defineConfig(({ command }) => ({
   plugins: [emitRouteEntrypoints()],
   root: "src",
-  base: command === "build" ? "/counterapp/" : "/",
+  base: command === "build" ? `/${APP_SLUG}/` : "/",
   build: {
     emptyOutDir: true,
     outDir: "../dist",

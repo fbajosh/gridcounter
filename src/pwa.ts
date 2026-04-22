@@ -1,4 +1,5 @@
 const PWA_CACHE_REFRESH_PARAM = "__refresh_cache__";
+const CACHE_PREFIX = "gridcounter";
 
 function normalizedBasePath(): string {
   const baseUrl = import.meta.env.BASE_URL ?? "/";
@@ -6,7 +7,7 @@ function normalizedBasePath(): string {
 }
 
 function isManagedCacheName(cacheName: string): boolean {
-  return cacheName.startsWith("counterapp-precache-") || cacheName.startsWith("counterapp-runtime-");
+  return cacheName.startsWith(`${CACHE_PREFIX}-precache-`) || cacheName.startsWith(`${CACHE_PREFIX}-runtime-`);
 }
 
 function refreshUrlWithBypassToken(): string {

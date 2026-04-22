@@ -1,6 +1,6 @@
 # Grid Counter
 
-This repo powers `appmogged.com/counter`.
+This repo powers `appmogged.com/gridcounter`.
 
 Grid Counter is a touch-first nested counting app for tracking related totals in a simple expandable grid. The live app is meant to feel fast on mobile, work as a home-screen web app, and keep layouts and session state locally in the browser.
 
@@ -17,7 +17,7 @@ Grid Counter is a touch-first nested counting app for tracking related totals in
 ## App Notes
 
 - This app follows the same general Vite / i18n / PWA / GitHub Actions VM deploy shape as the adjacent Connect 4 app.
-- The intended production route is `appmogged.com/counter`.
+- The intended production route is `appmogged.com/gridcounter`.
 - State and saved layouts are local-only browser storage right now.
 
 ## Maintenance Map

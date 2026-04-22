@@ -37,7 +37,7 @@ export const APP_TRANSLATIONS = {
       aboutTitle: "About",
       aboutBody1: "Welcome to Grid Counter, brought to you by Appmogged.",
       aboutBody2: "Grid Counter is a touch-first nested counting app for tracking related totals through a simple expandable grid.",
-      aboutBody3: "This app runs at appmogged.com/counter, stores layouts and session state locally in the browser, and includes stats for reviewing tap activity over time.",
+      aboutBody3: "This app runs at appmogged.com/gridcounter, stores layouts and session state locally in the browser, and includes stats for reviewing tap activity over time.",
     },
     controls: {
       view: "View",
@@ -163,7 +163,7 @@ export const APP_TRANSLATIONS = {
       aboutTitle: "Acerca de",
       aboutBody1: "Bienvenido a Grid Counter, creado por Appmogged.",
       aboutBody2: "Grid Counter es una app de conteo tactil para seguir totales relacionados mediante una cuadricula simple y expandable.",
-      aboutBody3: "Esta app vive en appmogged.com/counter, guarda disposiciones y estado de sesion localmente en el navegador e incluye estadisticas para revisar la actividad con el tiempo.",
+      aboutBody3: "Esta app vive en appmogged.com/gridcounter, guarda disposiciones y estado de sesion localmente en el navegador e incluye estadisticas para revisar la actividad con el tiempo.",
     },
     controls: {
       view: "Vista",
@@ -289,7 +289,7 @@ export const APP_TRANSLATIONS = {
       aboutTitle: "Sobre",
       aboutBody1: "Bem-vindo ao Grid Counter, criado pela Appmogged.",
       aboutBody2: "Grid Counter e uma app de contagem orientada ao toque para acompanhar totais relacionados numa grelha simples e expansivel.",
-      aboutBody3: "Esta app vive em appmogged.com/counter, guarda esquemas e o estado da sessao localmente no navegador e inclui estatisticas para rever a atividade ao longo do tempo.",
+      aboutBody3: "Esta app vive em appmogged.com/gridcounter, guarda esquemas e o estado da sessao localmente no navegador e inclui estatisticas para rever a atividade ao longo do tempo.",
     },
     controls: {
       view: "Vista",
