@@ -2,6 +2,7 @@ import type { AppState, CounterRow, InteractionMode, SavedLayout, ThemeName } fr
 import {
   aggregateCounterCount,
   appendChildCounter,
+  createInitialCounterRow,
   flattenCounters,
   insertSiblingCounter,
   measureCounterNodeHeight,
@@ -13,7 +14,17 @@ import {
 } from "./counter-tree";
 import { applyTranslations, setLocale, t } from "./i18n";
 import { registerPwaServiceWorker, stripPwaCacheRefreshParamFromUrl } from "./pwa";
-import { buildStatsSnapshot, cloneLayoutRow, loadAppState, loadSavedLayouts, recordEvent, saveAppState, upsertSavedLayout } from "./stats";
+import {
+  buildStatsSnapshot,
+  cloneLayoutRow,
+  loadAppState,
+  loadDefaultLayoutId,
+  loadSavedLayouts,
+  recordEvent,
+  saveAppState,
+  saveDefaultLayoutId,
+  upsertSavedLayout,
+} from "./stats";
 import { applyTheme } from "./theme";
 
 type DialogName = "stats" | "instructions" | "about" | "save-layout" | "load-layout" | "theme" | "language";
@@ -45,7 +56,9 @@ interface CounterGesture extends PointerGestureBase {
 
 const MOVE_CANCEL_DISTANCE = 12;
 
+const appShellElement = requireElement<HTMLElement>(".app-shell");
 const toolbarBarElement = requireElement<HTMLElement>(".toolbar-bar");
+const treeScrollerElement = requireElement<HTMLElement>(".tree-scroller");
 const counterTreeElement = requireElement<HTMLElement>("#counter-tree");
 const statsSummaryElement = requireElement<HTMLElement>("#stats-summary");
 const timelineWrapElement = requireElement<HTMLElement>("#timeline-wrap");
@@ -64,9 +77,16 @@ const languageButtons = Array.from(document.querySelectorAll<HTMLButtonElement>(
 
 let state = loadAppState();
 let savedLayouts = loadSavedLayouts();
+let defaultLayoutId = loadDefaultLayoutId();
+if (defaultLayoutId && !savedLayouts.some((layout) => layout.id === defaultLayoutId)) {
+  defaultLayoutId = null;
+  saveDefaultLayoutId(null);
+}
 let openMenuId: string | null = null;
 let openDialogId: DialogName | null = null;
 let activeCounterGesture: CounterGesture | null = null;
+let responsiveBoardSizingFrame = 0;
+let treeScrollerResizeObserver: ResizeObserver | null = null;
 
 function requireElement<T extends Element>(selector: string): T {
   const element = document.querySelector<T>(selector);
@@ -95,6 +115,101 @@ function lookupCounter(nodeId: string, row = state.rootRow) {
 
 function displayCounterTitle(rawTitle: string): string {
   return rawTitle.trim() || t("counter.fallbackTitle");
+}
+
+type MobileLayoutMode = "portrait" | "landscape" | null;
+
+function getMobileLayoutMode(): MobileLayoutMode {
+  if (window.matchMedia("(max-width: 640px) and (orientation: portrait)").matches) {
+    return "portrait";
+  }
+
+  if (window.matchMedia("(max-height: 640px) and (orientation: landscape)").matches) {
+    return "landscape";
+  }
+
+  return null;
+}
+
+function parsePixelValue(value: string): number {
+  const trimmedValue = value.trim();
+  if (!trimmedValue) {
+    return 0;
+  }
+
+  if (trimmedValue.endsWith("px")) {
+    const parsed = Number.parseFloat(trimmedValue);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
+  if (trimmedValue.endsWith("rem")) {
+    const parsed = Number.parseFloat(trimmedValue);
+    const rootFontSize = Number.parseFloat(window.getComputedStyle(document.documentElement).fontSize);
+    return Number.isFinite(parsed) && Number.isFinite(rootFontSize) ? parsed * rootFontSize : 0;
+  }
+
+  if (trimmedValue.endsWith("em")) {
+    const parsed = Number.parseFloat(trimmedValue);
+    const fontSize = Number.parseFloat(window.getComputedStyle(counterTreeElement).fontSize);
+    return Number.isFinite(parsed) && Number.isFinite(fontSize) ? parsed * fontSize : 0;
+  }
+
+  const parsed = Number.parseFloat(trimmedValue);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function measureCounterColumnCount(row: CounterRow): number {
+  const flattened = flattenCounters(row);
+  return flattened.reduce((maxColumns, counter) => Math.max(maxColumns, counter.depth + 1), 1);
+}
+
+function updateResponsiveBoardSizing(): void {
+  responsiveBoardSizingFrame = 0;
+
+  const mobileLayoutMode = getMobileLayoutMode();
+  if (!mobileLayoutMode) {
+    treeScrollerElement.style.removeProperty("height");
+    counterTreeElement.style.removeProperty("--counter-grid-row-size");
+    counterTreeElement.style.removeProperty("--counter-card-width");
+    counterTreeElement.style.removeProperty("padding-bottom");
+    return;
+  }
+
+  const shellRect = appShellElement.getBoundingClientRect();
+  const scrollerRect = treeScrollerElement.getBoundingClientRect();
+  const shellStyles = window.getComputedStyle(appShellElement);
+  const bottomGutter = parsePixelValue(shellStyles.paddingBottom);
+  const scrollerHeight = Math.max(0, shellRect.bottom - scrollerRect.top);
+  const availableHeight = Math.max(0, scrollerHeight - bottomGutter);
+  treeScrollerElement.style.height = `${scrollerHeight}px`;
+  counterTreeElement.style.paddingBottom = `${bottomGutter}px`;
+  const availableWidth = treeScrollerElement.clientWidth;
+  if (availableHeight <= 0 || availableWidth <= 0) {
+    return;
+  }
+
+  const computedStyles = window.getComputedStyle(counterTreeElement);
+  const rowGap = parsePixelValue(computedStyles.getPropertyValue("--counter-grid-row-gap"));
+  const columnGap = parsePixelValue(computedStyles.getPropertyValue("--counter-grid-column-gap"));
+  const rowLimit = mobileLayoutMode === "portrait" ? 5 : 2;
+  const columnLimit = mobileLayoutMode === "portrait" ? 2 : 5;
+  const visibleRows = Math.min(measureCounterRowHeight(state.rootRow), rowLimit);
+  const visibleColumns = Math.min(measureCounterColumnCount(state.rootRow), columnLimit);
+  const rowSize = (availableHeight - rowGap * Math.max(0, visibleRows - 1)) / visibleRows;
+  const cardWidth = (availableWidth - columnGap * Math.max(0, visibleColumns - 1)) / visibleColumns;
+
+  counterTreeElement.style.setProperty("--counter-grid-row-size", `${Math.max(1, rowSize)}px`);
+  counterTreeElement.style.setProperty("--counter-card-width", `${Math.max(1, cardWidth)}px`);
+}
+
+function scheduleResponsiveBoardSizing(): void {
+  if (responsiveBoardSizingFrame) {
+    window.cancelAnimationFrame(responsiveBoardSizingFrame);
+  }
+
+  responsiveBoardSizingFrame = window.requestAnimationFrame(() => {
+    updateResponsiveBoardSizing();
+  });
 }
 
 function setState(nextState: AppState): void {
@@ -170,10 +285,13 @@ function closeDialog(): void {
 }
 
 function formatSavedLayoutTimestamp(timestamp: number): string {
-  return new Intl.DateTimeFormat(state.preferences.locale, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(timestamp);
+  const date = new Date(timestamp);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hour = date.getHours();
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${year}-${month}-${day} ${hour}:${minutes}`;
 }
 
 function saveCurrentLayout(name: string): void {
@@ -198,6 +316,16 @@ function loadLayoutById(layoutId: string): void {
     rootRow: cloneLayoutRow(layout.rootRow),
     events: [],
   });
+}
+
+function setDefaultLayout(layoutId: string): void {
+  if (!savedLayouts.some((entry) => entry.id === layoutId)) {
+    return;
+  }
+
+  defaultLayoutId = layoutId;
+  saveDefaultLayoutId(layoutId);
+  renderSavedLayouts();
 }
 
 function applyCount(nodeId: string, source: "tap" | "hold"): void {
@@ -231,6 +359,22 @@ function resetEveryCounter(): void {
     {
       ...state,
       rootRow: resetAllCounters(state.rootRow),
+    },
+    {
+      type: "reset-counters",
+      source: "system",
+    },
+  );
+
+  setState(nextState);
+}
+
+function resetBoard(): void {
+  const defaultLayout = defaultLayoutId ? savedLayouts.find((layout) => layout.id === defaultLayoutId) ?? null : null;
+  const nextState = recordEvent(
+    {
+      ...state,
+      rootRow: defaultLayout ? cloneLayoutRow(defaultLayout.rootRow) : createInitialCounterRow(),
     },
     {
       type: "reset-all",
@@ -343,9 +487,10 @@ function renameCounter(nodeId: string, path: string, currentTitle: string): void
 function renderRow(row: CounterRow, prefix: number[] = []): string {
   const totalRows = measureCounterRowHeight(row);
   let nextRow = 1;
+  const rowClassName = prefix.length === 0 ? "counter-group counter-group-root" : "counter-group";
 
   return `
-    <section class="counter-group">
+    <section class="${rowClassName}">
       <div class="counter-list" style="grid-template-rows: repeat(${totalRows}, var(--counter-grid-row-size));">
         ${row.nodes
           .map((node, index) => {
@@ -364,9 +509,7 @@ function renderNode(node: CounterRow["nodes"][number], prefix: number[], rowStar
   const path = prefix.join(".");
   const title = displayCounterTitle(node.title);
   const displayCount = aggregateCounterCount(node);
-  const meta = node.childRow
-    ? t("counter.nestedCount", { count: node.childRow.nodes.length })
-    : t("counter.noSubcounters");
+  const meta = node.childRow ? t("counter.nestedCount", { count: node.childRow.nodes.length }) : "";
   const isEditMode = state.preferences.editMode;
 
   return `
@@ -374,21 +517,11 @@ function renderNode(node: CounterRow["nodes"][number], prefix: number[], rowStar
       <article class="counter-card ${isEditMode ? "is-editable" : ""}">
         <div class="counter-card-main">
           <div class="counter-card-head">
-            <p class="counter-title">${escapeHtml(title)}</p>
-            <div class="counter-card-controls">
-              <span class="counter-path">${escapeHtml(path)}</span>
+            <div class="counter-title-row">
+              <p class="counter-title">${escapeHtml(title)}</p>
               ${
                 isEditMode
                   ? `
-                    <button
-                      class="counter-control-button counter-close"
-                      type="button"
-                      data-node-action="remove"
-                      data-node-id="${node.id}"
-                      aria-label="${escapeHtml(t("counter.removeAria", { path }))}"
-                    >
-                      x
-                    </button>
                     <button
                       class="counter-control-button counter-edit"
                       type="button"
@@ -404,11 +537,29 @@ function renderNode(node: CounterRow["nodes"][number], prefix: number[], rowStar
                   : ""
               }
             </div>
+            <div class="counter-card-controls">
+              ${
+                isEditMode
+                  ? `
+                    <button
+                      class="counter-control-button counter-close"
+                      type="button"
+                      data-node-action="remove"
+                      data-node-id="${node.id}"
+                      aria-label="${escapeHtml(t("counter.removeAria", { path }))}"
+                    >
+                      ×
+                    </button>
+                  `
+                  : ""
+              }
+            </div>
           </div>
           <button class="counter-tap" type="button" data-counter-trigger data-node-id="${node.id}">
             <span class="counter-number">${escapeHtml(formatNumber(displayCount))}</span>
             <span class="counter-meta">${escapeHtml(meta)}</span>
           </button>
+          <span class="counter-path">${escapeHtml(path)}</span>
         </div>
         ${
           isEditMode
@@ -522,7 +673,7 @@ function renderControls(): void {
 
   for (const button of editModeButtons) {
     button.classList.toggle("is-active", state.preferences.editMode);
-    button.textContent = state.preferences.editMode ? t("controls.exitEditMode") : t("controls.enterEditMode");
+    button.textContent = t("controls.editMode");
   }
 
   for (const button of stepButtons) {
@@ -549,15 +700,26 @@ function renderSavedLayouts(): void {
   savedLayoutListElement.innerHTML = savedLayouts
     .map((layout: SavedLayout) => {
       const savedAt = formatSavedLayoutTimestamp(layout.savedAt);
+      const isDefault = layout.id === defaultLayoutId;
       return `
         <article class="saved-layout-item">
           <div class="saved-layout-copy">
             <p class="saved-layout-name">${escapeHtml(layout.name)}</p>
-            <p class="saved-layout-meta">${escapeHtml(t("dialogs.savedAt", { date: savedAt }))}</p>
+            <p class="saved-layout-meta">${escapeHtml(savedAt)}</p>
           </div>
-          <button class="toolbar-option saved-layout-load" type="button" data-layout-load-id="${layout.id}">
-            ${escapeHtml(t("dialogs.loadAction"))}
-          </button>
+          <div class="saved-layout-actions">
+            <button class="toolbar-option saved-layout-load" type="button" data-layout-load-id="${layout.id}">
+              ${escapeHtml(t("dialogs.loadAction"))}
+            </button>
+            <button
+              class="toolbar-option saved-layout-default ${isDefault ? "is-active" : ""}"
+              type="button"
+              data-layout-default-id="${layout.id}"
+              aria-pressed="${String(isDefault)}"
+            >
+              ${escapeHtml(t("dialogs.defaultAction"))}
+            </button>
+          </div>
         </article>
       `;
     })
@@ -600,6 +762,7 @@ function render(): void {
   renderBoard();
   renderStats();
   document.title = t("app.boardTitle");
+  scheduleResponsiveBoardSizing();
 }
 
 function startCounterGesture(nodeId: string, event: PointerEvent): void {
@@ -720,6 +883,7 @@ function handleControlClick(event: MouseEvent): void {
   if (
     themeButton?.dataset.themeValue === "dark" ||
     themeButton?.dataset.themeValue === "light" ||
+    themeButton?.dataset.themeValue === "astronomer" ||
     themeButton?.dataset.themeValue === "mogged"
   ) {
     updatePreferences("theme", themeButton.dataset.themeValue as ThemeName);
@@ -759,7 +923,20 @@ function handleControlClick(event: MouseEvent): void {
     return;
   }
 
+  const layoutDefaultButton = target.closest<HTMLButtonElement>("[data-layout-default-id]");
+  if (layoutDefaultButton?.dataset.layoutDefaultId) {
+    event.preventDefault();
+    setDefaultLayout(layoutDefaultButton.dataset.layoutDefaultId);
+    return;
+  }
+
   if (target.closest("#reset-all-button")) {
+    closeToolbarMenus();
+    resetBoard();
+    return;
+  }
+
+  if (target.closest("#reset-counters-button")) {
     closeToolbarMenus();
     resetEveryCounter();
     return;
@@ -836,6 +1013,14 @@ function initialize(): void {
   document.addEventListener("pointercancel", handlePointerEnd);
   document.addEventListener("pointermove", handlePointerMove);
   counterTreeElement.addEventListener("pointerdown", handlePointerDown);
+  window.addEventListener("resize", scheduleResponsiveBoardSizing);
+
+  if (typeof ResizeObserver !== "undefined") {
+    treeScrollerResizeObserver = new ResizeObserver(() => {
+      scheduleResponsiveBoardSizing();
+    });
+    treeScrollerResizeObserver.observe(treeScrollerElement);
+  }
 }
 
 initialize();

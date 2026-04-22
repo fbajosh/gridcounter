@@ -66,6 +66,7 @@
             <span class="toolbar-button-glyph toolbar-button-glyph-symbol" aria-hidden="true">±</span>
           </button>
           <div class="toolbar-panel hidden" id="mode-menu">
+            <p class="toolbar-panel-title" data-i18n="controls.tapAction">Tap action</p>
             <button class="toolbar-option" type="button" data-mode="increment" data-i18n="controls.increment">Increment</button>
             <button class="toolbar-option" type="button" data-mode="decrement" data-i18n="controls.decrement">Decrement</button>
           </div>
@@ -108,9 +109,39 @@
             </svg>
           </button>
           <div class="toolbar-panel hidden" id="step-menu">
+            <p class="toolbar-panel-title" data-i18n="controls.stepSize">Step size</p>
             <button class="toolbar-option" type="button" data-step="1">1</button>
             <button class="toolbar-option" type="button" data-step="5">5</button>
             <button class="toolbar-option" type="button" data-step="10">10</button>
+          </div>
+        </div>
+
+        <div class="toolbar-item">
+          <button
+            class="toolbar-button"
+            type="button"
+            data-menu-toggle="reset-menu"
+            aria-controls="reset-menu"
+            aria-expanded="false"
+            aria-label="Reset"
+            data-i18n-aria-label="controls.reset"
+          >
+            <svg
+              class="toolbar-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M14 8C14 8.81 13.842 9.596 13.528 10.336C13.224 11.053 12.791 11.694 12.241 12.243C11.694 12.791 11.053 13.224 10.337 13.528C9.59602 13.841 8.81002 14 8.00002 14C7.19002 14 6.40402 13.842 5.66402 13.528C4.94702 13.224 4.30602 12.791 3.75702 12.242C3.20802 11.693 2.77602 11.053 2.47202 10.337C2.31002 9.956 2.48802 9.516 2.86902 9.354C3.25102 9.19 3.69002 9.37 3.85202 9.751C4.08102 10.288 4.40502 10.77 4.81802 11.181C5.23002 11.595 5.71202 11.919 6.24902 12.148C7.35602 12.615 8.64302 12.615 9.75202 12.148C10.288 11.919 10.77 11.595 11.181 11.183C11.595 10.77 11.919 10.288 12.148 9.751C12.381 9.197 12.501 8.608 12.501 8C12.501 7.392 12.382 6.803 12.148 6.248C11.919 5.712 11.595 5.23 11.182 4.819C10.77 4.405 10.288 4.081 9.75102 3.852C8.64402 3.385 7.35702 3.385 6.24802 3.852C5.71202 4.081 5.23002 4.405 4.81902 4.817C4.60802 5.027 4.42002 5.256 4.25702 5.5H6.24902C6.66302 5.5 6.99902 5.836 6.99902 6.25C6.99902 6.664 6.66302 7 6.24902 7H2.74902C2.33502 7 1.99902 6.664 1.99902 6.25V2.75C1.99902 2.336 2.33502 2 2.74902 2C3.16302 2 3.49902 2.336 3.49902 2.75V4.032C3.58202 3.938 3.66802 3.845 3.75802 3.757C4.30502 3.209 4.94602 2.776 5.66202 2.472C7.14402 1.845 8.85402 1.845 10.335 2.472C11.052 2.776 11.693 3.209 12.242 3.758C12.791 4.307 13.223 4.947 13.527 5.663C13.84 6.404 13.999 7.19 13.999 8H14Z" />
+            </svg>
+          </button>
+          <div class="toolbar-panel hidden" id="reset-menu">
+            <p class="toolbar-panel-title" data-i18n="controls.reset">Reset</p>
+            <button class="toolbar-option" id="reset-counters-button" type="button" data-i18n="controls.resetCounters">Counters</button>
+            <button class="toolbar-option toolbar-option-danger" id="reset-all-button" type="button" data-i18n="controls.resetAll">All</button>
           </div>
         </div>
 
@@ -139,10 +170,10 @@
             </svg>
           </button>
           <div class="toolbar-panel hidden" id="edit-menu">
-            <button class="toolbar-option" id="edit-mode-button" type="button" data-edit-mode>Enter Edit Mode</button>
+            <p class="toolbar-panel-title" data-i18n="controls.layout">Layout</p>
+            <button class="toolbar-option" id="edit-mode-button" type="button" data-edit-mode data-i18n="controls.editMode">Edit</button>
             <button class="toolbar-option" type="button" data-dialog-open="save-layout" data-i18n="controls.saveLayout">Save Layout</button>
             <button class="toolbar-option" type="button" data-dialog-open="load-layout" data-i18n="controls.loadLayout">Load Layout</button>
-            <button class="toolbar-option toolbar-option-danger" id="reset-all-button" type="button" data-i18n="controls.resetAll">Reset All</button>
           </div>
         </div>
 
@@ -171,11 +202,12 @@
             </svg>
           </button>
           <div class="toolbar-panel hidden" id="settings-menu">
+            <p class="toolbar-panel-title" data-i18n="controls.settingsMenu">Settings</p>
             <button class="toolbar-option" type="button" data-dialog-open="stats" data-i18n="views.stats">Stats</button>
             <button class="toolbar-option" type="button" data-dialog-open="instructions" data-i18n="dialogs.instructionsMenu">Instructions</button>
-            <button class="toolbar-option" type="button" data-dialog-open="about" data-i18n="dialogs.aboutMenu">About</button>
             <button class="toolbar-option" type="button" data-dialog-open="theme" data-i18n="controls.theme">Theme</button>
             <button class="toolbar-option" type="button" data-dialog-open="language" data-i18n="controls.language">Language</button>
+            <button class="toolbar-option" type="button" data-dialog-open="about" data-i18n="dialogs.aboutMenu">About</button>
           </div>
         </div>
       </section>
@@ -200,7 +232,7 @@
       <article class="dialog-card dialog-card-stats">
         <div class="dialog-header">
           <h2 class="dialog-title" id="stats-dialog-title" data-i18n="views.stats">Stats</h2>
-          <button class="dialog-close close-chip" type="button" data-dialog-close aria-label="Close" data-i18n-aria-label="dialogs.close">x</button>
+          <button class="dialog-close close-chip" type="button" data-dialog-close aria-label="Close" data-i18n-aria-label="dialogs.close">×</button>
         </div>
         <div class="dialog-body dialog-body-stats">
           <div class="stats-grid" id="stats-summary"></div>
@@ -235,13 +267,13 @@
       <article class="dialog-card">
         <div class="dialog-header">
           <h2 class="dialog-title" id="instructions-dialog-title" data-i18n="dialogs.instructionsTitle">Instructions</h2>
-          <button class="dialog-close close-chip" type="button" data-dialog-close aria-label="Close" data-i18n-aria-label="dialogs.close">x</button>
+          <button class="dialog-close close-chip" type="button" data-dialog-close aria-label="Close" data-i18n-aria-label="dialogs.close">×</button>
         </div>
         <div class="dialog-body">
-          <p data-i18n="dialogs.instructionsIntro">Tap any counter tile to change its number.</p>
-          <p data-i18n="dialogs.instructionsExpand">Turn on Edit Mode to reveal the right and bottom + slivers for expanding the grid.</p>
-          <p data-i18n="dialogs.instructionsRename">In Edit Mode, tap the pencil under a counter's path pill to rename it.</p>
-          <p data-i18n="dialogs.instructionsToolbar">Use the top bar to open stats and settings, change mode, adjust count-by, manage edit mode, save or load layouts, and reset all.</p>
+          <p data-i18n="dialogs.instructionsIntro">Tap any counter tile to change its number using the current tap action and step size.</p>
+          <p data-i18n="dialogs.instructionsExpand">Open Edit to reveal the right and bottom + slivers for expanding the grid and the × control for removing counters.</p>
+          <p data-i18n="dialogs.instructionsRename">In Edit, tap the pencil next to a counter name to rename it, then save the layout if you want to reuse it later.</p>
+          <p data-i18n="dialogs.instructionsToolbar">Use the top bar to switch tap behavior, change step size, manage layouts, reset counters or the full board, and open stats or settings.</p>
         </div>
       </article>
     </div>
@@ -257,15 +289,12 @@
       <article class="dialog-card">
         <div class="dialog-header">
           <h2 class="dialog-title" id="about-dialog-title" data-i18n="dialogs.aboutTitle">About</h2>
-          <button class="dialog-close close-chip" type="button" data-dialog-close aria-label="Close" data-i18n-aria-label="dialogs.close">x</button>
+          <button class="dialog-close close-chip" type="button" data-dialog-close aria-label="Close" data-i18n-aria-label="dialogs.close">×</button>
         </div>
         <div class="dialog-body">
-          <p data-i18n="dialogs.aboutBody1">
-            Grid Counter is a touch-first nested tally app for tracking grouped counts on a phone-sized screen.
-          </p>
-          <p data-i18n="dialogs.aboutBody2">
-            It runs as a web app for now, stores your session locally, and includes a stats view for activity over time.
-          </p>
+          <p data-i18n="dialogs.aboutBody1">Welcome to Grid Counter, brought to you by Appmogged.</p>
+          <p data-i18n="dialogs.aboutBody2">Grid Counter is a touch-first nested counting app for tracking related totals through a simple expandable grid.</p>
+          <p data-i18n="dialogs.aboutBody3">This app runs at appmogged.com/counter, stores layouts and session state locally in the browser, and includes stats for reviewing tap activity over time.</p>
         </div>
       </article>
     </div>
@@ -281,12 +310,13 @@
       <article class="dialog-card">
         <div class="dialog-header">
           <h2 class="dialog-title" id="theme-dialog-title" data-i18n="controls.theme">Theme</h2>
-          <button class="dialog-close close-chip" type="button" data-dialog-close aria-label="Close" data-i18n-aria-label="dialogs.close">x</button>
+          <button class="dialog-close close-chip" type="button" data-dialog-close aria-label="Close" data-i18n-aria-label="dialogs.close">×</button>
         </div>
         <div class="dialog-body">
           <div class="dialog-choice-list">
             <button class="choice-chip" type="button" data-theme-value="dark" data-i18n="themes.dark">Dark</button>
             <button class="choice-chip" type="button" data-theme-value="light" data-i18n="themes.light">Light</button>
+            <button class="choice-chip" type="button" data-theme-value="astronomer" data-i18n="themes.astronomer">Astronomer</button>
             <button class="choice-chip" type="button" data-theme-value="mogged" data-i18n="themes.mogged">Mogged</button>
           </div>
         </div>
@@ -304,7 +334,7 @@
       <article class="dialog-card">
         <div class="dialog-header">
           <h2 class="dialog-title" id="language-dialog-title" data-i18n="controls.language">Language</h2>
-          <button class="dialog-close close-chip" type="button" data-dialog-close aria-label="Close" data-i18n-aria-label="dialogs.close">x</button>
+          <button class="dialog-close close-chip" type="button" data-dialog-close aria-label="Close" data-i18n-aria-label="dialogs.close">×</button>
         </div>
         <div class="dialog-body">
           <div class="dialog-choice-list">
@@ -327,7 +357,7 @@
       <article class="dialog-card">
         <div class="dialog-header">
           <h2 class="dialog-title" id="save-layout-dialog-title" data-i18n="dialogs.saveLayoutTitle">Save Layout</h2>
-          <button class="dialog-close close-chip" type="button" data-dialog-close aria-label="Close" data-i18n-aria-label="dialogs.close">x</button>
+          <button class="dialog-close close-chip" type="button" data-dialog-close aria-label="Close" data-i18n-aria-label="dialogs.close">×</button>
         </div>
         <form class="dialog-form" id="save-layout-form">
           <label class="dialog-field" for="save-layout-name">
@@ -353,7 +383,7 @@
       <article class="dialog-card">
         <div class="dialog-header">
           <h2 class="dialog-title" id="load-layout-dialog-title" data-i18n="dialogs.loadLayoutTitle">Load Layout</h2>
-          <button class="dialog-close close-chip" type="button" data-dialog-close aria-label="Close" data-i18n-aria-label="dialogs.close">x</button>
+          <button class="dialog-close close-chip" type="button" data-dialog-close aria-label="Close" data-i18n-aria-label="dialogs.close">×</button>
         </div>
         <div class="saved-layout-list" id="saved-layout-list"></div>
       </article>

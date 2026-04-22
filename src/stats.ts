@@ -13,10 +13,11 @@ import { countCounters, createInitialCounterRow, flattenCounters, sumCounts } fr
 
 const STORAGE_KEY = "counter-grid-state-v1";
 const LAYOUT_STORAGE_KEY = "counter-grid-layouts-v1";
+const DEFAULT_LAYOUT_STORAGE_KEY = "counter-grid-default-layout-v1";
 const MAX_EVENTS = 2000;
 
 function coerceTheme(value: unknown): ThemeName {
-  return value === "light" || value === "mogged" ? value : "dark";
+  return value === "light" || value === "astronomer" || value === "mogged" ? value : "dark";
 }
 
 function coerceLocale(value: unknown): SupportedLocale {
@@ -253,6 +254,24 @@ export function loadSavedLayouts(): SavedLayout[] {
   }
 }
 
+export function loadDefaultLayoutId(): string | null {
+  try {
+    const rawValue = window.localStorage.getItem(DEFAULT_LAYOUT_STORAGE_KEY);
+    return rawValue && rawValue.trim() ? rawValue : null;
+  } catch {
+    return null;
+  }
+}
+
+export function saveDefaultLayoutId(layoutId: string | null): void {
+  if (!layoutId) {
+    window.localStorage.removeItem(DEFAULT_LAYOUT_STORAGE_KEY);
+    return;
+  }
+
+  window.localStorage.setItem(DEFAULT_LAYOUT_STORAGE_KEY, layoutId);
+}
+
 export function upsertSavedLayout(name: string, row: CounterRow, currentLayouts: SavedLayout[]): SavedLayout[] {
   const normalizedName = name.trim();
   if (!normalizedName) {
@@ -311,7 +330,9 @@ export function buildStatsSnapshot(state: AppState, now = Date.now()): StatsSnap
   const flattened = flattenCounters(state.rootRow);
   const totalCount = sumCounts(state.rootRow);
   const totalTapEvents = state.events.filter((event) => event.type === "count").length;
-  const totalResets = state.events.filter((event) => event.type === "reset-node" || event.type === "reset-all").length;
+  const totalResets = state.events.filter(
+    (event) => event.type === "reset-node" || event.type === "reset-counters" || event.type === "reset-all",
+  ).length;
   const firstTimestamp = state.events[0]?.timestamp ?? state.createdAt;
   const elapsedMilliseconds = Math.max(0, (state.lastInteractionAt ?? now) - firstTimestamp);
   const countEvents = state.events.filter((event) => event.type === "count");

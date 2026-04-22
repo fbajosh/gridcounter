@@ -3,7 +3,12 @@
 }
 
 :root {
+  --app-bg-top: #131625;
   --app-bg: #0e1017;
+  --body-overlay:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.03), transparent 24%),
+    linear-gradient(300deg, rgba(255, 255, 255, 0.02), transparent 18%),
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0) 62%);
   --panel-bg: rgba(17, 19, 28, 0.88);
   --panel-border: rgba(255, 255, 255, 0.1);
   --card-bg: linear-gradient(180deg, rgba(30, 34, 48, 0.98), rgba(18, 20, 30, 0.98));
@@ -39,7 +44,7 @@ body {
   margin: 0;
   color: var(--text-primary);
   font-family: var(--body-font);
-  background: linear-gradient(180deg, #131625 0%, var(--app-bg) 100%);
+  background: linear-gradient(180deg, var(--app-bg-top) 0%, var(--app-bg) 100%);
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
@@ -49,10 +54,7 @@ body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background:
-    linear-gradient(120deg, rgba(255, 255, 255, 0.03), transparent 24%),
-    linear-gradient(300deg, rgba(255, 255, 255, 0.02), transparent 18%),
-    radial-gradient(circle at center, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0) 62%);
+  background: var(--body-overlay);
   pointer-events: none;
   z-index: 1;
 }
@@ -194,6 +196,38 @@ button {
   animation: bokeh-float-a 25s ease-in-out infinite alternate, bokeh-pulse 13s ease-in-out infinite 6s;
 }
 
+:root[data-theme="mogged"] .bokeh-dot-1 {
+  animation-duration: 3.8s, 1.5s;
+}
+
+:root[data-theme="mogged"] .bokeh-dot-2 {
+  animation-duration: 3.3s, 1.8s;
+}
+
+:root[data-theme="mogged"] .bokeh-dot-3 {
+  animation-duration: 2.9s, 1.2s;
+}
+
+:root[data-theme="mogged"] .bokeh-dot-4 {
+  animation-duration: 4.2s, 1.7s;
+}
+
+:root[data-theme="mogged"] .bokeh-dot-5 {
+  animation-duration: 3.6s, 1.4s;
+}
+
+:root[data-theme="mogged"] .bokeh-dot-6 {
+  animation-duration: 3.1s, 1.1s;
+}
+
+:root[data-theme="mogged"] .bokeh-dot-7 {
+  animation-duration: 2.7s, 1s;
+}
+
+:root[data-theme="mogged"] .bokeh-dot-8 {
+  animation-duration: 2.5s, 1.3s;
+}
+
 @keyframes bokeh-float-a {
   0% {
     transform: translate3d(0, 0, 0) scale(1);
@@ -243,10 +277,14 @@ button {
 .app-shell {
   position: relative;
   z-index: 2;
+  width: 100%;
+  min-width: 0;
+  height: 100dvh;
   min-height: 100dvh;
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr);
   gap: 0.95rem;
+  overflow-x: hidden;
   padding:
     max(env(safe-area-inset-top), 0.9rem)
     max(env(safe-area-inset-right), 0.9rem)
@@ -257,7 +295,9 @@ button {
 .app-header,
 .toolbar-bar,
 .workspace-panel {
-  width: min(100%, 92rem);
+  width: 100%;
+  max-width: 92rem;
+  min-width: 0;
   margin: 0 auto;
 }
 
@@ -299,7 +339,7 @@ button {
   z-index: 100;
   isolation: isolate;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   align-items: center;
   gap: 0.4rem;
   padding: 0.2rem 0;
@@ -623,6 +663,23 @@ body.has-open-dialog .app-shell {
   text-align: center;
 }
 
+.saved-layout-actions {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.saved-layout-default {
+  width: auto;
+  min-width: 5.4rem;
+  text-align: center;
+}
+
+.saved-layout-default.is-active {
+  background: var(--accent-gradient-soft);
+  border-color: color-mix(in srgb, var(--accent-color) 40%, var(--panel-border));
+  color: var(--text-primary);
+}
+
 .stats-card {
   border: 1px solid var(--panel-border);
   border-radius: var(--surface-radius);
@@ -634,19 +691,28 @@ body.has-open-dialog .app-shell {
 .workspace-panel {
   position: relative;
   z-index: 1;
+  height: 100%;
+  width: 100%;
+  min-width: 0;
   min-height: 0;
   overflow: visible;
 }
 
 .workspace-view {
+  width: 100%;
+  min-width: 0;
   height: 100%;
   min-height: 0;
 }
 
 .tree-scroller {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
   height: 100%;
-  min-height: min(34rem, calc(100dvh - 9.8rem));
-  overflow: auto;
+  min-height: 0;
+  overflow-x: auto;
+  overflow-y: auto;
   padding: 0;
 }
 
@@ -654,6 +720,7 @@ body.has-open-dialog .app-shell {
   --counter-grid-row-size: 6.85rem;
   --counter-grid-row-gap: 0.95rem;
   --counter-grid-column-gap: 1rem;
+  --counter-card-width: clamp(8.75rem, 23vw, 10.35rem);
   display: grid;
   gap: 0.95rem;
   width: max-content;
@@ -664,8 +731,11 @@ body.has-open-dialog .app-shell {
 .counter-group {
   position: relative;
   width: max-content;
-  min-width: 100%;
   overflow: visible;
+}
+
+.counter-group-root {
+  min-width: 100%;
 }
 
 .counter-list {
@@ -676,12 +746,17 @@ body.has-open-dialog .app-shell {
   align-content: start;
 }
 
+.counter-group-root > .counter-list {
+  min-width: 100%;
+}
+
 .counter-row {
   display: grid;
-  grid-template-columns: max-content max-content;
+  grid-template-columns: var(--counter-card-width) max-content;
   align-items: flex-start;
   column-gap: var(--counter-grid-column-gap);
   min-height: 0;
+  width: max-content;
 }
 
 .counter-branch {
@@ -691,12 +766,12 @@ body.has-open-dialog .app-shell {
 }
 
 .counter-card {
-  --counter-sliver-size: 1.05rem;
+  --counter-sliver-size: clamp(0.9rem, min(calc(var(--counter-card-width) * 0.12), calc(var(--counter-grid-row-size) * 0.12)), 1.55rem);
   --counter-sliver-fill: rgba(255, 255, 255, 0.014);
   --counter-sliver-line: rgba(255, 255, 255, 0.05);
   position: relative;
   height: var(--counter-grid-row-size);
-  width: clamp(8.75rem, 23vw, 10.35rem);
+  width: var(--counter-card-width);
   overflow: hidden;
   border: 1px solid var(--card-border);
   border-radius: 1.05rem;
@@ -714,18 +789,26 @@ body.has-open-dialog .app-shell {
   grid-column: 1;
   grid-row: 1;
   min-width: 0;
+  position: relative;
 }
 
 .counter-card-head {
   display: block;
   min-height: 1.25rem;
-  padding: 0.8rem 2.7rem 0 0.9rem;
+  padding: 0.8rem 3rem 0 0.9rem;
+}
+
+.counter-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.38rem;
+  min-width: 0;
 }
 
 .counter-title {
   margin: 0;
-  display: block;
-  max-width: 100%;
+  flex: 1 1 auto;
+  min-width: 0;
   font-size: 0.95rem;
   font-weight: 700;
   line-height: 1.15;
@@ -757,6 +840,9 @@ body.has-open-dialog .app-shell {
 }
 
 .counter-path {
+  position: absolute;
+  top: 0.78rem;
+  right: 1rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -769,6 +855,12 @@ body.has-open-dialog .app-shell {
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+}
+
+.counter-card.is-editable .counter-path {
+  top: auto;
+  right: calc(var(--counter-sliver-size) + 0.48rem);
+  bottom: calc(var(--counter-sliver-size) + 0.48rem);
 }
 
 .counter-control-button {
@@ -787,12 +879,17 @@ body.has-open-dialog .app-shell {
 }
 
 .counter-close {
-  font-size: 0.92rem;
+  min-width: 1.2rem;
+  min-height: 1.2rem;
+  font-size: 1.3rem;
+  line-height: 0.78;
 }
 
 .counter-edit {
-  width: 0.9rem;
-  min-height: 0.9rem;
+  width: 1rem;
+  min-width: 1rem;
+  min-height: 1rem;
+  color: var(--text-secondary);
 }
 
 .counter-number {
@@ -814,7 +911,7 @@ body.has-open-dialog .app-shell {
   border: 0;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0.008));
   color: rgba(198, 206, 223, 0.52);
-  font-size: 0.82rem;
+  font-size: clamp(0.82rem, calc(var(--counter-sliver-size) * 0.64), 1.08rem);
   font-weight: 700;
 }
 
@@ -1057,12 +1154,58 @@ body.has-open-dialog .app-shell {
   .counter-row {
     column-gap: 0.8rem;
   }
+}
 
-  .counter-card {
-    width: min(70vw, 10rem);
+@media (max-height: 640px) and (orientation: landscape) {
+  .app-shell {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 0.7rem 0.9rem;
+    align-items: start;
   }
 
-  .counter-branch {
-    padding-left: 0.8rem;
+  .app-header,
+  .toolbar-bar,
+  .workspace-panel {
+    max-width: none;
+    margin: 0;
+  }
+
+  .app-header {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+    padding: 0;
+  }
+
+  .brand-block {
+    min-width: 0;
+  }
+
+  .app-title {
+    flex-wrap: nowrap;
+    gap: 0.22rem;
+    font-size: clamp(1.65rem, 5.2vw, 2.3rem);
+    white-space: nowrap;
+  }
+
+  .toolbar-bar {
+    grid-column: 2;
+    grid-row: 1;
+    width: max-content;
+    grid-template-columns: repeat(5, 2.6rem);
+    gap: 0.3rem;
+    padding: 0;
+    justify-content: end;
+  }
+
+  .toolbar-button {
+    width: 2.6rem;
+    height: 2.6rem;
+  }
+
+  .workspace-panel {
+    grid-column: 1 / -1;
+    grid-row: 2;
   }
 }

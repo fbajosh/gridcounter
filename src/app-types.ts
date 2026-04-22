@@ -1,6 +1,6 @@
 export type InteractionMode = "increment" | "decrement";
 export type ViewName = "board" | "stats";
-export type ThemeName = "dark" | "light" | "mogged";
+export type ThemeName = "dark" | "light" | "astronomer" | "mogged";
 export type SupportedLocale = "en-US" | "es-ES" | "pt-PT";
 
 export interface CounterRow {
@@ -29,6 +29,7 @@ export interface CounterPreferences {
 export type CounterEventType =
   | "count"
   | "reset-node"
+  | "reset-counters"
   | "reset-all"
   | "add-child"
   | "add-sibling"

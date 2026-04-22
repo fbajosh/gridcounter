@@ -1,41 +1,37 @@
-# Counter Grid
+# Grid Counter
 
-Counter Grid is a browser-first tally app for fast touch counting with nested subcounters. It follows the same Vite, localization, PWA, and deployment shape as the adjacent Connect 4 app, but the core interaction is a recursive counter tree instead of a game board.
+This repo powers `appmogged.com/counter`.
 
-## What It Does
+Grid Counter is a touch-first nested counting app for tracking related totals in a simple expandable grid. The live app is meant to feel fast on mobile, work as a home-screen web app, and keep layouts and session state locally in the browser.
 
-- Starts with one counter in the top-left of the main workspace.
-- Tapping a counter changes its value by the active step size.
-- `+Right` adds a subcounter to that counter.
-- `+Down` adds a sibling counter below it.
-- Each counter can expand again, so the workspace becomes a nested grid/tree of related counts.
-- Long-pressing a counter title renames that counter, and long-pressing a row title renames the row.
-- Top controls let you switch increment vs decrement, change count step, arm tap-to-reset, reset everything, and choose long-press behavior.
-- A separate stats view summarizes tap activity, resets, active counters, and timeline buckets from the local event log.
-- State persists locally with `localStorage`.
-- Production builds emit a static app shell, a service worker, a manifest, and standalone-friendly metadata for home-screen installation.
+## Current Product Shape
 
-## Local Development
+- Tap a counter to apply the current tap action at the current step size.
+- Use `Edit` to reveal layout controls:
+  `+` on the right adds a nested counter, `+` on the bottom adds the next counter down, `×` removes a counter tree, and the pencil renames a counter.
+- Save and load named layouts locally.
+- Mark any saved layout as the default used by `Reset -> All`.
+- `Reset -> Counters` zeroes counts without changing structure.
+- `Stats` shows session totals, tap timeline, and most active counters.
+
+## App Notes
+
+- This app follows the same general Vite / i18n / PWA / GitHub Actions VM deploy shape as the adjacent Connect 4 app.
+- The intended production route is `appmogged.com/counter`.
+- State and saved layouts are local-only browser storage right now.
+
+## Maintenance Map
+
+- [`src/index.html`](./src/index.html): shell, toolbar menus, and modal markup
+- [`src/landing.ts`](./src/landing.ts): rendering, controls, responsive sizing, and interaction wiring
+- [`src/counter-tree.ts`](./src/counter-tree.ts): nested counter structure and tree operations
+- [`src/stats.ts`](./src/stats.ts): persistence, saved layouts, default layout selection, and stats aggregation
+- [`src/i18n.ts`](./src/i18n.ts): localized UI copy
+- [`src/landing.css`](./src/landing.css): mobile-first layout, toolbar, counters, and modal styling
+
+## Quick Checks
 
 ```bash
-npm install
 npm run dev
+npm run build
 ```
-
-## Deploy Shape
-
-The repository includes the same VM sync workflow shape used by the Connect 4 app:
-
-- GitHub Actions builds the static site on pushes to `main`
-- a build version is stamped into the environment
-- the generated `dist/` directory is synced to a configured VM over SSH
-
-## Source Map
-
-- [`src/landing.ts`](./src/landing.ts): app bootstrap, DOM wiring, routing, rendering, and touch handling
-- [`src/counter-tree.ts`](./src/counter-tree.ts): nested counter tree creation and updates
-- [`src/stats.ts`](./src/stats.ts): state persistence and session/stat aggregation
-- [`src/i18n.ts`](./src/i18n.ts): in-app localization strings and translation helpers
-- [`src/theme.ts`](./src/theme.ts): theme token application
-- [`src/pwa.ts`](./src/pwa.ts): service worker registration and cache refresh support
-- [`src/landing.css`](./src/landing.css): mobile-first shell and nested counter layout

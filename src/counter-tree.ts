@@ -25,8 +25,23 @@ export function createCounterRow(): CounterRow {
   };
 }
 
+function createCounterRowWithNodes(nodes: CounterNode[]): CounterRow {
+  return {
+    id: createEntityId("row"),
+    title: "",
+    nodes,
+    createdAt: Date.now(),
+  };
+}
+
 export function createInitialCounterRow(): CounterRow {
-  return createCounterRow();
+  const firstBranch = createCounterNode();
+  const secondBranch = createCounterNode();
+
+  firstBranch.childRow = createCounterRowWithNodes([createCounterNode(), createCounterNode()]);
+  secondBranch.childRow = createCounterRowWithNodes([createCounterNode(), createCounterNode()]);
+
+  return createCounterRowWithNodes([firstBranch, secondBranch]);
 }
 
 export function aggregateCounterCount(node: CounterNode): number {
