@@ -467,35 +467,33 @@ function applyCount(nodeId: string, source: "tap" | "hold"): void {
   setState(nextState);
 }
 
-function resetEveryCounter(): void {
+function resetStatsSession(rootRow: CounterRow, eventType: "reset-counters" | "reset-all"): void {
+  const timestamp = Date.now();
   const nextState = recordEvent(
     {
       ...state,
-      rootRow: resetAllCounters(state.rootRow),
+      createdAt: timestamp,
+      lastInteractionAt: null,
+      rootRow,
+      events: [],
     },
     {
-      type: "reset-counters",
+      type: eventType,
       source: "system",
+      timestamp,
     },
   );
 
   setState(nextState);
 }
 
+function resetEveryCounter(): void {
+  resetStatsSession(resetAllCounters(state.rootRow), "reset-counters");
+}
+
 function resetBoard(): void {
   const defaultLayout = defaultLayoutId ? savedLayouts.find((layout) => layout.id === defaultLayoutId) ?? null : null;
-  const nextState = recordEvent(
-    {
-      ...state,
-      rootRow: defaultLayout ? cloneLayoutRow(defaultLayout.rootRow) : createInitialCounterRow(),
-    },
-    {
-      type: "reset-all",
-      source: "system",
-    },
-  );
-
-  setState(nextState);
+  resetStatsSession(defaultLayout ? cloneLayoutRow(defaultLayout.rootRow) : createInitialCounterRow(), "reset-all");
 }
 
 function addChildCounter(nodeId: string): void {
