@@ -22,6 +22,8 @@ export interface CounterPreferences {
   interactionMode: InteractionMode;
   step: number;
   editMode: boolean;
+  soundEnabled: boolean;
+  vibrationEnabled: boolean;
   theme: ThemeName;
   locale: SupportedLocale;
 }
@@ -75,8 +77,10 @@ export interface FlattenedCounter {
 }
 
 export interface TimelineBucket {
-  label: string;
-  value: number;
+  startElapsedLabel: string;
+  endElapsedLabel: string;
+  instantaneousTaps: number;
+  aggregateTaps: number;
 }
 
 export interface CounterActivitySummary {
@@ -93,9 +97,10 @@ export interface StatsSnapshot {
   totalResets: number;
   totalCount: number;
   elapsedLabel: string;
-  peakMinuteLabel: string;
+  peakWindowLabel: string;
   averagePerMinuteLabel: string;
   leaderLabel: string;
+  timelineBucketSeconds: number;
   timeline: TimelineBucket[];
   activeCounters: CounterActivitySummary[];
 }

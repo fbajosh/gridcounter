@@ -72,6 +72,8 @@ function sanitizePreferences(value: unknown): CounterPreferences {
     interactionMode: candidate.interactionMode === "decrement" ? "decrement" : "increment",
     step: candidate.step === 5 || candidate.step === 10 ? candidate.step : 1,
     editMode: Boolean(candidate.editMode),
+    soundEnabled: candidate.soundEnabled !== false,
+    vibrationEnabled: candidate.vibrationEnabled !== false,
     theme: coerceTheme(candidate.theme),
     locale: coerceLocale(candidate.locale),
   };
@@ -132,11 +134,22 @@ function formatRate(events: number, minutes: number, locale: SupportedLocale): s
   }).format(events / minutes);
 }
 
-function formatMinuteLabel(timestamp: number, locale: SupportedLocale): string {
-  return new Intl.DateTimeFormat(locale, {
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(timestamp);
+function formatElapsedBucketLabel(totalSeconds: number, locale: SupportedLocale): string {
+  const normalizedSeconds = Math.max(0, Math.floor(totalSeconds));
+  const hours = Math.floor(normalizedSeconds / 3600);
+  const minutes = Math.floor((normalizedSeconds % 3600) / 60);
+  const seconds = normalizedSeconds % 60;
+  const formatter = new Intl.NumberFormat(locale);
+
+  if (hours > 0) {
+    return `${formatter.format(hours)}h ${formatter.format(minutes)}m`;
+  }
+
+  if (minutes > 0) {
+    return `${formatter.format(minutes)}m ${formatter.format(seconds)}s`;
+  }
+
+  return `${formatter.format(seconds)}s`;
 }
 
 function createEventId(): string {
@@ -208,6 +221,8 @@ export function createDefaultState(): AppState {
       interactionMode: "increment",
       step: 1,
       editMode: false,
+      soundEnabled: true,
+      vibrationEnabled: true,
       theme: "dark",
       locale: "en-US",
     },
@@ -329,32 +344,53 @@ export function buildStatsSnapshot(state: AppState, now = Date.now()): StatsSnap
   const locale = state.preferences.locale;
   const flattened = flattenCounters(state.rootRow);
   const totalCount = sumCounts(state.rootRow);
-  const totalTapEvents = state.events.filter((event) => event.type === "count").length;
+  const countEvents = state.events.filter((event) => event.type === "count").sort((left, right) => left.timestamp - right.timestamp);
+  const totalTapEvents = countEvents.length;
   const totalResets = state.events.filter(
     (event) => event.type === "reset-node" || event.type === "reset-counters" || event.type === "reset-all",
   ).length;
   const firstTimestamp = state.events[0]?.timestamp ?? state.createdAt;
   const elapsedMilliseconds = Math.max(0, (state.lastInteractionAt ?? now) - firstTimestamp);
-  const countEvents = state.events.filter((event) => event.type === "count");
+  let timelineBucketSeconds = 1;
+  let timeline: StatsSnapshot["timeline"] = [];
 
-  const timelineMap = new Map<number, number>();
-  for (const event of countEvents) {
-    const bucketStart = Math.floor(event.timestamp / 60000) * 60000;
-    timelineMap.set(bucketStart, (timelineMap.get(bucketStart) ?? 0) + 1);
+  if (countEvents.length > 0) {
+    const firstTapTimestamp = countEvents[0].timestamp;
+    const lastTapTimestamp = countEvents[countEvents.length - 1].timestamp;
+    const recordedTapSpanMilliseconds = Math.max(1, lastTapTimestamp - firstTapTimestamp);
+    const recordedTapSpanSeconds = Math.max(1, Math.ceil(recordedTapSpanMilliseconds / 1000));
+    timelineBucketSeconds = Math.max(1, Math.ceil(recordedTapSpanSeconds / 60));
+    const bucketDurationMilliseconds = timelineBucketSeconds * 1000;
+    const bucketCount = Math.max(1, Math.ceil(recordedTapSpanSeconds / timelineBucketSeconds));
+    const instantaneousBuckets = Array.from({ length: bucketCount }, () => 0);
+
+    for (const event of countEvents) {
+      const elapsedMillisecondsFromFirstTap = event.timestamp - firstTapTimestamp;
+      const bucketIndex = Math.min(bucketCount - 1, Math.floor(elapsedMillisecondsFromFirstTap / bucketDurationMilliseconds));
+      instantaneousBuckets[bucketIndex] += 1;
+    }
+
+    let aggregateTaps = 0;
+    timeline = instantaneousBuckets.map((instantaneousTaps, index) => {
+      aggregateTaps += instantaneousTaps;
+      const bucketStartSeconds = index * timelineBucketSeconds;
+      const bucketEndSeconds = Math.min(recordedTapSpanSeconds, (index + 1) * timelineBucketSeconds);
+
+      return {
+        startElapsedLabel: formatElapsedBucketLabel(bucketStartSeconds, locale),
+        endElapsedLabel: formatElapsedBucketLabel(bucketEndSeconds, locale),
+        instantaneousTaps,
+        aggregateTaps,
+      };
+    });
   }
 
-  const timeline = [...timelineMap.entries()]
-    .sort((left, right) => left[0] - right[0])
-    .slice(-12)
-    .map(([timestamp, value]) => ({
-      label: formatMinuteLabel(timestamp, locale),
-      value,
-    }));
-
-  let peakMinuteLabel = "0";
+  let peakWindowLabel = "0";
   if (timeline.length > 0) {
-    const peakBucket = timeline.reduce((best, current) => (current.value > best.value ? current : best));
-    peakMinuteLabel = `${peakBucket.value} @ ${peakBucket.label}`;
+    const peakBucket = timeline.reduce((best, current) =>
+      current.instantaneousTaps > best.instantaneousTaps ? current : best,
+    );
+    peakWindowLabel = `${peakBucket.instantaneousTaps} @ ${peakBucket.startElapsedLabel}-${peakBucket.endElapsedLabel}`;
   }
 
   const activityMap = new Map<string, { path: string; taps: number }>();
@@ -395,9 +431,10 @@ export function buildStatsSnapshot(state: AppState, now = Date.now()): StatsSnap
     totalResets,
     totalCount,
     elapsedLabel: formatDuration(elapsedMilliseconds, locale),
-    peakMinuteLabel,
+    peakWindowLabel,
     averagePerMinuteLabel: formatRate(totalTapEvents, elapsedMilliseconds / 60000, locale),
     leaderLabel: `${leader.path} (${new Intl.NumberFormat(locale).format(leader.count)})`,
+    timelineBucketSeconds,
     timeline,
     activeCounters,
   };

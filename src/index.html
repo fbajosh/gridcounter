@@ -29,9 +29,16 @@
       href="https://fonts.googleapis.com/css2?family=Ubuntu+Sans:ital,wght@0,400..700;1,400..700&display=swap"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
     <link rel="stylesheet" href="./landing.css" />
   </head>
   <body>
+    <audio id="mogged-theme-audio" src="./assets/mogged-bg.mp3" loop preload="auto" playsinline aria-hidden="true"></audio>
     <div class="bokeh-layer" aria-hidden="true">
       <span class="bokeh-dot bokeh-dot-1"></span>
       <span class="bokeh-dot bokeh-dot-2"></span>
@@ -203,11 +210,29 @@
           </button>
           <div class="toolbar-panel hidden" id="settings-menu">
             <p class="toolbar-panel-title" data-i18n="controls.settingsMenu">Settings</p>
-            <button class="toolbar-option" type="button" data-dialog-open="stats" data-i18n="views.stats">Stats</button>
-            <button class="toolbar-option" type="button" data-dialog-open="instructions" data-i18n="dialogs.instructionsMenu">Instructions</button>
-            <button class="toolbar-option" type="button" data-dialog-open="theme" data-i18n="controls.theme">Theme</button>
-            <button class="toolbar-option" type="button" data-dialog-open="language" data-i18n="controls.language">Language</button>
-            <button class="toolbar-option" type="button" data-dialog-open="about" data-i18n="dialogs.aboutMenu">About</button>
+            <div class="toolbar-panel-section">
+              <div class="toolbar-icon-toggle-row">
+                <button class="toolbar-option-icon" type="button" id="sound-toggle-button" aria-label="Sound On">
+                  <i class="fa-solid fa-volume" data-sound-icon aria-hidden="true"></i>
+                </button>
+                <button class="toolbar-option-icon" type="button" id="vibration-toggle-button" aria-label="Vibration On">
+                  <span class="toolbar-option-icon-image toolbar-option-icon-image-vibration" data-vibration-icon aria-hidden="true"></span>
+                </button>
+              </div>
+              <button class="toolbar-option" type="button" data-dialog-open="theme" data-i18n="controls.theme">Theme</button>
+              <button class="toolbar-option toolbar-option-inline" type="button" data-dialog-open="language">
+                <span data-i18n="controls.language">Language</span>
+                <svg class="toolbar-option-inline-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+                  <path d="M4.545 6.714 4.11 8H3l1.862-5h1.284L8 8H6.833l-.435-1.286zm1.634-.736L5.5 3.956h-.049l-.679 2.022z"/>
+                  <path d="M0 2a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v3h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-3H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zm7.138 9.995q.289.451.63.846c-.748.575-1.673 1.001-2.768 1.292.178.217.451.635.555.867 1.125-.359 2.08-.844 2.886-1.494.777.665 1.739 1.165 2.93 1.472.133-.254.414-.673.629-.89-1.125-.253-2.057-.694-2.82-1.284.681-.747 1.222-1.651 1.621-2.757H14V8h-3v1.047h.765c-.318.844-.74 1.546-1.272 2.13a6 6 0 0 1-.415-.492 2 2 0 0 1-.94.31"/>
+                </svg>
+              </button>
+            </div>
+            <div class="toolbar-panel-section">
+              <button class="toolbar-option" type="button" data-dialog-open="stats" data-i18n="views.stats">Stats</button>
+              <button class="toolbar-option" type="button" data-dialog-open="instructions" data-i18n="dialogs.instructionsMenu">Instructions</button>
+              <button class="toolbar-option" type="button" data-dialog-open="about" data-i18n="dialogs.aboutMenu">About</button>
+            </div>
           </div>
         </div>
       </section>
@@ -238,19 +263,15 @@
           <div class="stats-grid" id="stats-summary"></div>
 
           <div class="stats-panels">
-            <article class="stats-card">
-              <div class="stats-card-header">
-                <h2 class="stats-card-title" data-i18n="stats.timeline">Tap Timeline</h2>
-              </div>
+            <section class="stats-section">
+              <h2 class="stats-card-title" data-i18n="stats.timeline">Tap Timeline</h2>
               <div class="timeline-wrap" id="timeline-wrap"></div>
-            </article>
+            </section>
 
-            <article class="stats-card">
-              <div class="stats-card-header">
-                <h2 class="stats-card-title" data-i18n="stats.activeCounters">Most Active Counters</h2>
-              </div>
+            <section class="stats-section">
+              <h2 class="stats-card-title" data-i18n="stats.activeCounters">Most Active Counters</h2>
               <div class="active-counter-list" id="active-counter-list"></div>
-            </article>
+            </section>
           </div>
         </div>
       </article>
@@ -294,7 +315,6 @@
         <div class="dialog-body">
           <p data-i18n="dialogs.aboutBody1">Welcome to Grid Counter, brought to you by Appmogged.</p>
           <p data-i18n="dialogs.aboutBody2">Grid Counter is a touch-first nested counting app for tracking related totals through a simple expandable grid.</p>
-          <p data-i18n="dialogs.aboutBody3">This app runs at appmogged.com/gridcounter, stores layouts and session state locally in the browser, and includes stats for reviewing tap activity over time.</p>
         </div>
       </article>
     </div>

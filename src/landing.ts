@@ -43,6 +43,35 @@ const EDIT_ICON_SVG = `
   </svg>
 `;
 
+const COUNTER_TAP_SOUND_URL = new URL("./assets/click.mp3", import.meta.url).href;
+const MOGGED_COUNTER_TAP_SOUND_URL = new URL("./assets/bruh.mp3", import.meta.url).href;
+const HAPTIC_ON_ICON_SVG = `
+  <svg viewBox="0 0 180 177" xmlns="http://www.w3.org/2000/svg" fill="none">
+    <defs>
+      <linearGradient id="vibration-icon-gradient" x1="0" y1="0" x2="180" y2="177" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#ff6fb7"></stop>
+        <stop offset="50%" stop-color="#b98cff"></stop>
+        <stop offset="100%" stop-color="#6fd6ff"></stop>
+      </linearGradient>
+    </defs>
+    <path d="M118.574 0.000976562C135.142 0.00124045 148.574 13.4326 148.574 30.001V147.001C148.573 163.569 135.142 177.001 118.574 177.001H60.5737C44.0054 177.001 30.573 163.569 30.5728 147.001V30.001C30.5728 13.4324 44.0052 0.000976562 60.5737 0.000976562H118.574ZM60.5737 16.001C52.8417 16.001 46.5737 22.269 46.5737 30.001V147.001C46.574 154.733 52.8419 161.001 60.5737 161.001H118.574C126.305 161.001 132.573 154.733 132.574 147.001V30.001C132.574 22.2692 126.305 16.0012 118.574 16.001H60.5737ZM101.574 123.001C105.992 123.001 109.574 126.583 109.574 131.001C109.573 135.419 105.992 139.001 101.574 139.001H77.5737C73.1556 139.001 69.574 135.419 69.5737 131.001C69.5737 126.583 73.1555 123.001 77.5737 123.001H101.574Z" fill="url(#vibration-icon-gradient)"/>
+    <path d="M159.573 120.5L169.118 111.552C172.573 108.313 172.473 102.798 168.904 99.6858L162.708 94.2847C159.151 91.1834 159.037 85.6926 162.463 82.4469L169.008 76.2466C172.314 73.1143 172.342 67.8575 169.069 64.6902L159.573 55.5005" stroke="url(#vibration-icon-gradient)" stroke-width="15" stroke-linecap="round"/>
+    <path d="M19.5732 56.0005L10.0285 64.9486C6.57341 68.1878 6.67308 73.7029 10.243 76.8151L16.4384 82.2163C19.9958 85.3176 20.1094 90.8084 16.6833 94.0541L10.1386 100.254C6.83226 103.387 6.80432 108.643 10.0772 111.811L19.5732 121" stroke="url(#vibration-icon-gradient)" stroke-width="15" stroke-linecap="round"/>
+  </svg>
+`;
+const HAPTIC_OFF_ICON_SVG = `
+  <svg viewBox="0 0 181 181" xmlns="http://www.w3.org/2000/svg" fill="none">
+    <path d="M8 8L172.686 172.686" stroke="currentColor" stroke-width="16" stroke-linecap="round"/>
+    <path d="M8 8L172.686 172.686" stroke="currentColor" stroke-width="16" stroke-linecap="round"/>
+    <path d="M46.6868 79.314V149C46.687 156.732 52.9549 163 60.6868 163H118.687C121.963 163 124.976 161.874 127.361 159.989L138.709 171.337C133.399 176.101 126.382 179 118.687 179H60.6868C44.1184 179 30.687 165.569 30.6868 149V63.314L46.6868 79.314ZM118.687 1.99951C135.255 1.99978 148.687 15.4321 148.687 32.0005V149C148.687 151.942 148.26 154.784 147.471 157.47L132.687 142.686V32.0005C132.687 24.2687 126.419 18.0008 118.687 18.0005H60.6868C52.9548 18.0005 46.6868 24.2685 46.6868 32.0005V56.686L30.6868 40.686V32.0005C30.6868 15.4319 44.1182 1.99951 60.6868 1.99951H118.687ZM108.372 141H77.6868C73.2687 141 69.687 137.419 69.6868 133C69.6868 128.582 73.2685 125 77.6868 125H92.3723L108.372 141Z" fill="currentColor"/>
+    <path d="M46.6868 79.314V149C46.687 156.732 52.9549 163 60.6868 163H118.687C121.963 163 124.976 161.874 127.361 159.989L138.709 171.337C133.399 176.101 126.382 179 118.687 179H60.6868C44.1184 179 30.6861 165.569 30.6858 149V63.313L46.6868 79.314ZM118.687 2.00049C135.255 2.00075 148.687 15.4321 148.687 32.0005V149C148.687 151.942 148.26 154.784 147.471 157.47L132.687 142.686V32.0005C132.687 24.2687 126.419 18.0008 118.687 18.0005H60.6868C52.9548 18.0005 46.6868 24.2685 46.6868 32.0005V56.686L30.6858 40.6851V32.0005C30.6858 15.4319 44.1182 2.00049 60.6868 2.00049H118.687ZM108.372 141H77.6868C73.2687 141 69.687 137.419 69.6868 133C69.6868 128.582 73.2685 125 77.6868 125H92.3723L108.372 141Z" fill="currentColor"/>
+    <path d="M159.686 122.5L169.231 113.552C172.686 110.313 172.586 104.798 169.017 101.685L162.821 96.2842C159.264 93.1829 159.15 87.6921 162.576 84.4464L169.121 78.2462C172.427 75.1138 172.455 69.857 169.182 66.6897L159.686 57.5" stroke="currentColor" stroke-width="15" stroke-linecap="round"/>
+    <path d="M159.686 122.5L169.231 113.552C172.686 110.313 172.586 104.798 169.017 101.685L162.821 96.2842C159.264 93.1829 159.15 87.6921 162.576 84.4464L169.121 78.2462C172.427 75.1138 172.455 69.857 169.182 66.6897L159.686 57.5" stroke="currentColor" stroke-width="15" stroke-linecap="round"/>
+    <path d="M19.6863 58L10.1416 66.9482C6.68645 70.1873 6.78611 75.7024 10.356 78.8146L16.5515 84.2158C20.1088 87.3171 20.2224 92.8079 16.7964 96.0536L10.2517 102.254C6.9453 105.386 6.91736 110.643 10.1902 113.81L19.6863 123" stroke="currentColor" stroke-width="15" stroke-linecap="round"/>
+    <path d="M19.6863 58L10.1416 66.9482C6.68645 70.1873 6.78611 75.7024 10.356 78.8146L16.5515 84.2158C20.1088 87.3171 20.2224 92.8079 16.7964 96.0536L10.2517 102.254C6.9453 105.386 6.91736 110.643 10.1902 113.81L19.6863 123" stroke="currentColor" stroke-width="15" stroke-linecap="round"/>
+  </svg>
+`;
+
 interface PointerGestureBase {
   pointerId: number;
   startX: number;
@@ -60,6 +89,7 @@ const appShellElement = requireElement<HTMLElement>(".app-shell");
 const toolbarBarElement = requireElement<HTMLElement>(".toolbar-bar");
 const treeScrollerElement = requireElement<HTMLElement>(".tree-scroller");
 const counterTreeElement = requireElement<HTMLElement>("#counter-tree");
+const moggedThemeAudioElement = requireElement<HTMLAudioElement>("#mogged-theme-audio");
 const statsSummaryElement = requireElement<HTMLElement>("#stats-summary");
 const timelineWrapElement = requireElement<HTMLElement>("#timeline-wrap");
 const activeCounterListElement = requireElement<HTMLElement>("#active-counter-list");
@@ -74,6 +104,10 @@ const modeButtons = Array.from(document.querySelectorAll<HTMLButtonElement>("[da
 const stepButtons = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-step]"));
 const themeButtons = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-theme-value]"));
 const languageButtons = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-locale]"));
+const soundToggleButton = document.querySelector<HTMLButtonElement>("#sound-toggle-button");
+const vibrationToggleButton = document.querySelector<HTMLButtonElement>("#vibration-toggle-button");
+const soundToggleIcon = document.querySelector<HTMLElement>("[data-sound-icon]");
+const vibrationToggleIcon = document.querySelector<HTMLElement>("[data-vibration-icon]");
 
 let state = loadAppState();
 let savedLayouts = loadSavedLayouts();
@@ -87,6 +121,7 @@ let openDialogId: DialogName | null = null;
 let activeCounterGesture: CounterGesture | null = null;
 let responsiveBoardSizingFrame = 0;
 let treeScrollerResizeObserver: ResizeObserver | null = null;
+let pendingMoggedThemeAudioPlayback = false;
 
 function requireElement<T extends Element>(selector: string): T {
   const element = document.querySelector<T>(selector);
@@ -212,10 +247,83 @@ function scheduleResponsiveBoardSizing(): void {
   });
 }
 
+function playCounterTapSound(): void {
+  if (!state.preferences.soundEnabled) {
+    return;
+  }
+
+  const tapSound = new Audio(state.preferences.theme === "mogged" ? MOGGED_COUNTER_TAP_SOUND_URL : COUNTER_TAP_SOUND_URL);
+  tapSound.preload = "auto";
+  tapSound.volume = 1;
+  tapSound.addEventListener("ended", () => {
+    tapSound.src = "";
+  });
+  void tapSound.play().catch(() => {});
+}
+
+function vibrateCounterTap(): void {
+  if (!state.preferences.vibrationEnabled) {
+    return;
+  }
+
+  if (typeof navigator === "undefined" || typeof navigator.vibrate !== "function") {
+    return;
+  }
+
+  navigator.vibrate(8);
+}
+
+function pauseMoggedThemeAudio(): void {
+  pendingMoggedThemeAudioPlayback = false;
+  moggedThemeAudioElement.pause();
+  if (moggedThemeAudioElement.currentTime > 0) {
+    moggedThemeAudioElement.currentTime = 0;
+  }
+}
+
+function syncMoggedThemeAudioPlayback(): void {
+  if (state.preferences.theme !== "mogged" || !state.preferences.soundEnabled) {
+    pauseMoggedThemeAudio();
+    return;
+  }
+
+  const playbackAttempt = moggedThemeAudioElement.play();
+  if (playbackAttempt && typeof playbackAttempt.catch === "function") {
+    pendingMoggedThemeAudioPlayback = true;
+    playbackAttempt
+      .then(() => {
+        pendingMoggedThemeAudioPlayback = false;
+      })
+      .catch(() => {
+        pendingMoggedThemeAudioPlayback = true;
+      });
+    return;
+  }
+
+  pendingMoggedThemeAudioPlayback = false;
+}
+
+function resumeMoggedThemeAudioFromUserGesture(): void {
+  if (state.preferences.theme !== "mogged" || !state.preferences.soundEnabled) {
+    return;
+  }
+
+  if (!pendingMoggedThemeAudioPlayback && !moggedThemeAudioElement.paused) {
+    return;
+  }
+
+  syncMoggedThemeAudioPlayback();
+}
+
 function setState(nextState: AppState): void {
+  const previousTheme = state.preferences.theme;
+  const previousSoundEnabled = state.preferences.soundEnabled;
   state = nextState;
   saveAppState(state);
   applyTheme(state.preferences.theme);
+  if (previousTheme !== state.preferences.theme || previousSoundEnabled !== state.preferences.soundEnabled) {
+    syncMoggedThemeAudioPlayback();
+  }
   setLocale(state.preferences.locale);
   render();
 }
@@ -333,6 +441,11 @@ function applyCount(nodeId: string, source: "tap" | "hold"): void {
   const updated = updateCounterCount(state.rootRow, nodeId, delta);
   if (updated.countAfter === null) {
     return;
+  }
+
+  if (source === "tap") {
+    playCounterTapSound();
+    vibrateCounterTap();
   }
 
   const descriptor = lookupCounter(nodeId, updated.row);
@@ -604,7 +717,7 @@ function renderStats(): void {
     { label: t("stats.totalResets"), value: formatNumber(snapshot.totalResets) },
     { label: t("stats.totalCount"), value: formatNumber(snapshot.totalCount) },
     { label: t("stats.elapsed"), value: snapshot.elapsedLabel },
-    { label: t("stats.peakMinute"), value: snapshot.peakMinuteLabel },
+    { label: t("stats.peakMinute"), value: snapshot.peakWindowLabel },
     { label: t("stats.averagePerMinute"), value: snapshot.averagePerMinuteLabel },
     { label: t("stats.leader"), value: snapshot.leaderLabel },
   ];
@@ -623,21 +736,135 @@ function renderStats(): void {
   if (snapshot.timeline.length === 0) {
     timelineWrapElement.innerHTML = `<p class="timeline-empty">${escapeHtml(t("stats.noActivity"))}</p>`;
   } else {
-    const maxValue = Math.max(...snapshot.timeline.map((bucket) => bucket.value), 1);
+    const chartWidth = 720;
+    const chartHeight = 250;
+    const chartPaddingTop = 16;
+    const chartPaddingRight = 18;
+    const chartPaddingBottom = 34;
+    const chartPaddingLeft = 18;
+    const plotGap = 22;
+    const plotWidth = chartWidth - chartPaddingLeft - chartPaddingRight;
+    const plotHeight = (chartHeight - chartPaddingTop - chartPaddingBottom - plotGap) / 2;
+    const aggregateValues = snapshot.timeline.map((bucket) => bucket.aggregateTaps);
+    const instantaneousValues = snapshot.timeline.map((bucket) => bucket.instantaneousTaps);
+    const aggregateMaxValue = Math.max(...aggregateValues, 1);
+    const instantaneousMaxValue = Math.max(...instantaneousValues, 1);
+    const bottomPlotTop = chartPaddingTop + plotHeight + plotGap;
+    const tickStep = Math.max(1, Math.ceil(snapshot.timeline.length / 6));
+
+    const buildPlotPoints = (values: number[], maxValue: number, plotTop: number): string =>
+      values
+        .map((value, index) => {
+          const x =
+            values.length === 1
+              ? chartPaddingLeft + plotWidth / 2
+              : chartPaddingLeft + (index / Math.max(1, values.length - 1)) * plotWidth;
+          const y = plotTop + plotHeight - (value / Math.max(1, maxValue)) * plotHeight;
+          return `${x.toFixed(2)},${y.toFixed(2)}`;
+        })
+        .join(" ");
+
+    const renderGridLines = (plotTop: number): string =>
+      Array.from({ length: 4 }, (_, index) => {
+        const ratio = index / 3;
+        const y = plotTop + plotHeight - ratio * plotHeight;
+        return `<line class="timeline-grid-line" x1="${chartPaddingLeft}" y1="${y.toFixed(2)}" x2="${(chartPaddingLeft + plotWidth).toFixed(2)}" y2="${y.toFixed(2)}"></line>`;
+      }).join("");
+
+    const renderAxisLabels = (): string =>
+      snapshot.timeline
+        .map((bucket, index) => {
+          const isLast = index === snapshot.timeline.length - 1;
+          if (!isLast && index % tickStep !== 0) {
+            return "";
+          }
+
+          const x =
+            snapshot.timeline.length === 1
+              ? chartPaddingLeft + plotWidth / 2
+              : chartPaddingLeft + (index / Math.max(1, snapshot.timeline.length - 1)) * plotWidth;
+          return `
+            <text class="timeline-axis-label" x="${x.toFixed(2)}" y="${(chartHeight - 8).toFixed(2)}" text-anchor="middle">
+              ${escapeHtml(bucket.endElapsedLabel)}
+            </text>
+          `;
+        })
+        .join("");
+
+    const buildAreaPath = (values: number[], maxValue: number, plotTop: number): string => {
+      const points = values.map((value, index) => {
+        const x =
+          values.length === 1
+            ? chartPaddingLeft + plotWidth / 2
+            : chartPaddingLeft + (index / Math.max(1, values.length - 1)) * plotWidth;
+        const y = plotTop + plotHeight - (value / Math.max(1, maxValue)) * plotHeight;
+        return { x, y };
+      });
+
+      if (points.length === 0) {
+        return "";
+      }
+
+      const topPath = points
+        .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`)
+        .join(" ");
+      const lastPoint = points[points.length - 1];
+      const firstPoint = points[0];
+      const baselineY = plotTop + plotHeight;
+      return `${topPath} L ${lastPoint.x.toFixed(2)} ${baselineY.toFixed(2)} L ${firstPoint.x.toFixed(2)} ${baselineY.toFixed(2)} Z`;
+    };
+
+    const aggregatePoints = buildPlotPoints(aggregateValues, aggregateMaxValue, chartPaddingTop);
+    const instantaneousPoints = buildPlotPoints(instantaneousValues, instantaneousMaxValue, bottomPlotTop);
+    const aggregateAreaPath = buildAreaPath(aggregateValues, aggregateMaxValue, chartPaddingTop);
+    const instantaneousAreaPath = buildAreaPath(instantaneousValues, instantaneousMaxValue, bottomPlotTop);
+
     timelineWrapElement.innerHTML = `
-      <div class="timeline-bars">
-        ${snapshot.timeline
-          .map((bucket) => {
-            const height = Math.max(12, (bucket.value / maxValue) * 164);
-            return `
-              <div class="timeline-bar-group">
-                <span class="timeline-value">${escapeHtml(formatNumber(bucket.value))}</span>
-                <div class="timeline-bar" style="height:${height}px"></div>
-                <span class="timeline-label">${escapeHtml(bucket.label)}</span>
-              </div>
-            `;
-          })
-          .join("")}
+      <div class="timeline-chart">
+        <div class="timeline-legend">
+          <span class="timeline-legend-item">
+            <span class="timeline-legend-swatch timeline-legend-swatch-instantaneous" aria-hidden="true"></span>
+            ${escapeHtml(t("stats.instantaneous"))}
+          </span>
+          <span class="timeline-legend-item">
+            <span class="timeline-legend-swatch timeline-legend-swatch-aggregate" aria-hidden="true"></span>
+            ${escapeHtml(t("stats.aggregate"))}
+          </span>
+        </div>
+        <svg class="timeline-svg" viewBox="0 0 ${chartWidth} ${chartHeight}" aria-hidden="true">
+          <defs>
+            <linearGradient id="timeline-aggregate-fill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ff8fa7" stop-opacity="0.34"></stop>
+              <stop offset="58%" stop-color="#ff8fa7" stop-opacity="0.12"></stop>
+              <stop offset="100%" stop-color="#ff8fa7" stop-opacity="0"></stop>
+            </linearGradient>
+            <linearGradient id="timeline-instantaneous-fill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#7fd7ff" stop-opacity="0.3"></stop>
+              <stop offset="58%" stop-color="#7fd7ff" stop-opacity="0.1"></stop>
+              <stop offset="100%" stop-color="#7fd7ff" stop-opacity="0"></stop>
+            </linearGradient>
+          </defs>
+          ${renderGridLines(chartPaddingTop)}
+          ${renderGridLines(bottomPlotTop)}
+          <text class="timeline-series-label" x="${chartPaddingLeft}" y="${(chartPaddingTop - 2).toFixed(2)}" text-anchor="start">
+            ${escapeHtml(t("stats.aggregate"))}
+          </text>
+          <text class="timeline-series-value" x="${(chartPaddingLeft + plotWidth).toFixed(2)}" y="${(chartPaddingTop - 2).toFixed(2)}" text-anchor="end">
+            ${escapeHtml(formatNumber(aggregateMaxValue))}
+          </text>
+          <text class="timeline-series-label" x="${chartPaddingLeft}" y="${(bottomPlotTop - 2).toFixed(2)}" text-anchor="start">
+            ${escapeHtml(t("stats.instantaneous"))}
+          </text>
+          <text class="timeline-series-value" x="${(chartPaddingLeft + plotWidth).toFixed(2)}" y="${(bottomPlotTop - 2).toFixed(2)}" text-anchor="end">
+            ${escapeHtml(formatNumber(instantaneousMaxValue))}
+          </text>
+          <path class="timeline-area timeline-area-aggregate" d="${aggregateAreaPath}"></path>
+          <path class="timeline-area timeline-area-instantaneous" d="${instantaneousAreaPath}"></path>
+          <polyline class="timeline-line timeline-line-aggregate" points="${aggregatePoints}"></polyline>
+          <polyline class="timeline-line timeline-line-instantaneous" points="${instantaneousPoints}"></polyline>
+          ${renderAxisLabels()}
+        </svg>
+        <div class="timeline-window">${escapeHtml(t("stats.windowSize", { count: snapshot.timelineBucketSeconds }))}</div>
       </div>
     `;
   }
@@ -686,6 +913,29 @@ function renderControls(): void {
 
   for (const button of languageButtons) {
     button.classList.toggle("is-active", button.dataset.locale === state.preferences.locale);
+  }
+
+  if (soundToggleButton) {
+    soundToggleButton.classList.toggle("is-active", state.preferences.soundEnabled);
+    soundToggleButton.setAttribute("aria-pressed", String(state.preferences.soundEnabled));
+    soundToggleButton.setAttribute("aria-label", t(state.preferences.soundEnabled ? "controls.soundOn" : "controls.soundOff"));
+  }
+
+  if (soundToggleIcon) {
+    soundToggleIcon.className = `fa-solid ${state.preferences.soundEnabled ? "fa-volume-high" : "fa-volume-xmark"}`;
+  }
+
+  if (vibrationToggleButton) {
+    vibrationToggleButton.classList.toggle("is-active", state.preferences.vibrationEnabled);
+    vibrationToggleButton.setAttribute("aria-pressed", String(state.preferences.vibrationEnabled));
+    vibrationToggleButton.setAttribute(
+      "aria-label",
+      t(state.preferences.vibrationEnabled ? "controls.vibrationOn" : "controls.vibrationOff"),
+    );
+  }
+
+  if (vibrationToggleIcon) {
+    vibrationToggleIcon.innerHTML = state.preferences.vibrationEnabled ? HAPTIC_ON_ICON_SVG : HAPTIC_OFF_ICON_SVG;
   }
 
   renderToolbarMenus();
@@ -798,6 +1048,8 @@ function pointerMovedTooFar(gesture: PointerGestureBase, event: PointerEvent): b
 }
 
 function handlePointerDown(event: PointerEvent): void {
+  resumeMoggedThemeAudioFromUserGesture();
+
   const target = event.target instanceof Element ? event.target : null;
   if (!target || (event.pointerType === "mouse" && event.button !== 0)) {
     return;
@@ -910,6 +1162,18 @@ function handleControlClick(event: MouseEvent): void {
     return;
   }
 
+  if (target.closest("#sound-toggle-button")) {
+    closeToolbarMenus();
+    updatePreferences("soundEnabled", !state.preferences.soundEnabled);
+    return;
+  }
+
+  if (target.closest("#vibration-toggle-button")) {
+    closeToolbarMenus();
+    updatePreferences("vibrationEnabled", !state.preferences.vibrationEnabled);
+    return;
+  }
+
   if (target.closest("[data-edit-mode]")) {
     closeToolbarMenus();
     updatePreferences("editMode", !state.preferences.editMode);
@@ -988,6 +1252,8 @@ function handleFormSubmit(event: SubmitEvent): void {
 }
 
 function handleGlobalKeyDown(event: KeyboardEvent): void {
+  resumeMoggedThemeAudioFromUserGesture();
+
   if (event.key === "Escape") {
     if (openDialogId) {
       closeDialog();
@@ -1001,6 +1267,7 @@ function handleGlobalKeyDown(event: KeyboardEvent): void {
 function initialize(): void {
   stripPwaCacheRefreshParamFromUrl();
   applyTheme(state.preferences.theme);
+  syncMoggedThemeAudioPlayback();
   setLocale(state.preferences.locale);
   applyTranslations(document);
   render();
