@@ -867,6 +867,7 @@ body.has-open-dialog .app-shell {
   grid-column: 1;
   grid-row: 1;
   min-width: 0;
+  min-height: 100%;
   position: relative;
 }
 
@@ -874,6 +875,8 @@ body.has-open-dialog .app-shell {
   display: block;
   min-height: 1.25rem;
   padding: 0.8rem 3rem 0 0.9rem;
+  position: relative;
+  z-index: 1;
 }
 
 .counter-title-row {
@@ -881,6 +884,7 @@ body.has-open-dialog .app-shell {
   align-items: flex-start;
   gap: 0.38rem;
   min-width: 0;
+  pointer-events: none;
 }
 
 .counter-title {
@@ -900,6 +904,7 @@ body.has-open-dialog .app-shell {
   align-content: start;
   justify-items: center;
   gap: 0.22rem;
+  z-index: 2;
 }
 
 .counter-card.is-editable .counter-card-controls {
@@ -907,14 +912,19 @@ body.has-open-dialog .app-shell {
 }
 
 .counter-tap {
+  position: absolute;
+  inset: 0;
   width: 100%;
+  height: 100%;
   display: grid;
   gap: 0.22rem;
-  padding: 0.5rem 0.9rem 0.72rem;
+  align-content: start;
+  padding: 2.45rem 0.9rem 0.72rem;
   border: 0;
   background: transparent;
   color: inherit;
   text-align: left;
+  z-index: 0;
 }
 
 .counter-path {
@@ -933,6 +943,8 @@ body.has-open-dialog .app-shell {
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .counter-card.is-editable .counter-path {
